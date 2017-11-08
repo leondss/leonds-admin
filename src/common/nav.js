@@ -33,6 +33,8 @@ import Login from '../routes/User/Login';
 import Register from '../routes/User/Register';
 import RegisterResult from '../routes/User/RegisterResult';
 
+import Role from '../routes/System/Role';
+
 const data = [{
   component: BasicLayout,
   layout: 'BasicLayout',
@@ -150,6 +152,15 @@ const data = [{
       name: '500',
       path: '500',
       component: Exception500,
+    }],
+  }, {
+    name: '系统管理',
+    path: 'system',
+    icon: 'windows',
+    children: [{
+      name: '角色管理',
+      path: 'role',
+      component: Role,
     }],
   }],
 }, {
