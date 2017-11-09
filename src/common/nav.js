@@ -34,6 +34,7 @@ import Register from '../routes/User/Register';
 import RegisterResult from '../routes/User/RegisterResult';
 
 import Role from '../routes/System/Role';
+import Terms from '../routes/Cms/Terms';
 
 const data = [{
   component: BasicLayout,
@@ -161,6 +162,15 @@ const data = [{
       name: '角色管理',
       path: 'role',
       component: Role,
+    }],
+  }, {
+    name: '内容管理',
+    path: 'content',
+    icon: 'windows',
+    children: [{
+      name: '分类',
+      path: 'terms',
+      component: Terms,
     }],
   }],
 }, {
