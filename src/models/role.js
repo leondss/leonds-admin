@@ -1,4 +1,4 @@
-import { queryRole, removeRole, saveRole } from '../services/api';
+import { queryRole, removeRole, saveRole } from '../services/role';
 
 export default {
   namespace: 'role',
@@ -11,17 +11,16 @@ export default {
       total: 0,
     },
     loading: true,
+    loadingSave: false,
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    * fetch({ payload }, { call, put }) {
       yield put({
         type: 'changeLoading',
         payload: true,
       });
       const response = yield call(queryRole, payload);
-      console.log('resp==');
-      console.log(response);
       yield put({
         type: 'save',
         payload: response,
@@ -31,32 +30,29 @@ export default {
         payload: false,
       });
     },
-    *add({ payload, callback }, { call, put }) {
+    * add({ payload, callback }, { call, put }) {
       yield put({
-        type: 'changeLoading',
+        type: 'changeLoadingEdit',
         payload: true,
       });
-      const response = yield call(saveRole, payload);
+      yield call(saveRole, payload);
       yield put({
-        type: 'save',
-        payload: response,
-      });
-      yield put({
-        type: 'changeLoading',
+        type: 'changeLoadingEdit',
         payload: false,
       });
-
+      yield put({
+        type: 'fetch',
+      });
       if (callback) callback();
     },
-    *remove({ payload, callback }, { call, put }) {
+    * remove({ payload, callback }, { call, put }) {
       yield put({
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(removeRole, payload);
+      yield call(removeRole, payload.ids);
       yield put({
-        type: 'save',
-        payload: response,
+        type: 'fetch',
       });
       yield put({
         type: 'changeLoading',
@@ -78,6 +74,12 @@ export default {
       return {
         ...state,
         loading: action.payload,
+      };
+    },
+    changeLoadingEdit(state, action) {
+      return {
+        ...state,
+        loadingSave: action.payload,
       };
     },
   },

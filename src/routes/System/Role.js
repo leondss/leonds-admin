@@ -1,16 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Table,
-  Button,
-  message,
-} from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { Button, Card, Col, Form, Input, message, Modal, Popconfirm, Row, Table } from 'antd';
 
 import styles from './Role.less';
 
@@ -22,8 +12,9 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 @Form.create()
 export default class Role extends PureComponent {
   state = {
-    selectedRows: [],
-    formValues: {},
+    modalVisible: false,
+    currentItem: {},
+    q: '',
   };
 
   componentDidMount() {
@@ -54,80 +45,98 @@ export default class Role extends PureComponent {
       params.sorter = `${sorter.field}_${sorter.order}`;
     }
 
-    console.log(params);
-
     dispatch({
       type: 'role/fetch',
       payload: params,
     });
   };
 
-  handleSelectRows = (rows) => {
-    this.setState({
-      selectedRows: rows,
-    });
-  }
-
-  handleSearch = (e) => {
+  handleSearch = () => {
     const { dispatch } = this.props;
-    if (e) {
-      console.log(e);
-      this.setState({
-        formValues: e,
-      });
-
-      dispatch({
-        type: 'role/fetch',
-        payload: {
-          q: e,
-        },
-      });
-    }
-  }
-
-  handleAddInput = (e) => {
-    this.setState({
-      addInputValue: e.target.value,
-    });
-  }
-
-  handleAdd = () => {
-    this.props.dispatch({
-      type: 'rule/add',
+    const { q } = this.state;
+    dispatch({
+      type: 'role/fetch',
       payload: {
-        description: this.state.addInputValue,
+        q,
       },
     });
+  }
 
-    message.success('添加成功');
+  handleOk = () => {
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+      this.props.dispatch({
+        type: 'role/add',
+        payload: {
+          ...values,
+        },
+      });
+      this.setState({ modalVisible: false });
+      message.success('保存成功');
+      form.resetFields();
+    });
+  }
+
+  handleCancel = () => {
+    this.setState({ modalVisible: false });
+  }
+
+  openModal = (record) => {
+    if (record) {
+      this.setState({ currentItem: record });
+    } else {
+      this.setState({ currentItem: {} });
+    }
+    this.setState({ modalVisible: true });
+  }
+
+  handleRemove = (record) => {
+    const ids = [record.id];
+    this.props.dispatch({
+      type: 'role/remove',
+      payload: {
+        ids,
+      },
+    });
+    message.success('删除成功');
+  }
+
+  handleInputChange = (e) => {
+    this.setState({
+      q: e.target.value,
+    });
   }
 
   renderForm() {
-    const { selectedRows } = this.state;
+    const ColProps = {
+      xs: 24,
+      sm: 12,
+      style: {
+        marginBottom: 16,
+      },
+    };
     return (
       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-        <Col md={24} sm={24}>
-          <Input.Search
-            placeholder="输入名称或代码查询"
+        <Col {...ColProps} span={24}>
+          <Input
+            placeholder="名称或代码"
             style={{ width: 200 }}
-            onSearch={this.handleSearch}
+            onChange={this.handleInputChange}
           />
-          <Button type="primary">新增</Button>
-          <Button type="primary">编辑</Button>
-          {
-            selectedRows.length > 0 && (
-              <Button type="primary">删除({selectedRows.length})</Button>
-            )
-          }
-
+          <Button type="primary" icon="search" onClick={this.handleSearch}>查询</Button>
+          <Button type="primary" onClick={this.openModal}>新增</Button>
         </Col>
       </Row>
     );
   }
 
   render() {
-    const { role: { loading, data } } = this.props;
-    const { selectedRows } = this.state;
+    const { role: { loading, data, loadingSave } } = this.props;
+    const { modalVisible, currentItem } = this.state;
+    const { getFieldDecorator } = this.props.form;
 
     const columns = [{
       title: '名称',
@@ -135,12 +144,27 @@ export default class Role extends PureComponent {
     }, {
       title: '代码',
       dataIndex: 'code',
+    }, {
+      title: '操作',
+      key: 'action',
+      render: (text, record) => (
+        <span>
+          <a onClick={() => {
+            this.openModal(record);
+          }}
+          >编辑
+          </a>
+          <Popconfirm
+            title="确定要删除吗?"
+            onConfirm={() => {
+              this.handleRemove(record);
+            }}
+          >
+            &nbsp;&nbsp;<a>删除</a>
+          </Popconfirm>
+        </span>
+      ),
     }];
-
-    const rowSelection = {
-      selectedRows,
-      onChange: this.handleSelectRows,
-    };
 
     const paginationProps = {
       showSizeChanger: true,
@@ -149,27 +173,73 @@ export default class Role extends PureComponent {
       total: data.total,
     };
 
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 3 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 14 },
+      },
+    };
+
     return (
-      <PageHeaderLayout>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListForm}>
-              {this.renderForm()}
-            </div>
-
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={data.rows}
-              loading={loading}
-              rowKey="id"
-              pagination={paginationProps}
-              onChange={this.handleTableChange}
-            />
+      <Card title="角色管理" bordered={false} style={{ margin: '0' }}>
+        <div className={styles.tableList}>
+          <div className={styles.tableListForm}>
+            {this.renderForm()}
           </div>
-        </Card>
-
-      </PageHeaderLayout>
+          <Table
+            columns={columns}
+            dataSource={data.rows}
+            loading={loading}
+            rowKey="id"
+            size="small"
+            pagination={paginationProps}
+            onChange={this.handleTableChange}
+          />
+          <Modal
+            title="角色编辑"
+            visible={modalVisible}
+            onCancel={this.handleCancel}
+            footer={[
+              <Button key="back" onClick={this.handleCancel}>取消</Button>,
+              <Button key="submit" htmlType="submit" type="primary" loading={loadingSave} onClick={this.handleOk}>
+                保存
+              </Button>,
+            ]}
+          >
+            <Form layout="vertical">
+              {getFieldDecorator('id', {
+                initialValue: currentItem.id,
+              })(
+                <Input type="hidden" />
+              )}
+              <Form.Item label="名称" {...formItemLayout}>
+                {getFieldDecorator('name', {
+                  initialValue: currentItem.name,
+                  rules: [{
+                    required: true, message: '请输入角色名称',
+                  }],
+                })(
+                  <Input />
+                )}
+              </Form.Item>
+              <Form.Item label="代码" {...formItemLayout}>
+                {getFieldDecorator('code', {
+                  initialValue: currentItem.code,
+                  rules: [{
+                    required: true, message: '请输入代码',
+                  }],
+                })(
+                  <Input />
+                )}
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
+      </Card>
     );
   }
 }
