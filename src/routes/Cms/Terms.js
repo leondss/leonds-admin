@@ -1,24 +1,18 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Col, Form, Input, message, Popconfirm, Row, Table, Radio } from 'antd';
+import { Button, Card, Col, Form, Input, message, Modal, Popconfirm, Row, Table, Radio } from 'antd';
+
+import styles from './Terms.less';
 
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
-const EditableCell = ({ editable, value, onChange }) => (
-  <div>
-    {editable
-      ? <Input style={{ margin: '-5px 0' }} value={value} onChange={e => onChange(e.target.value)} />
-      : value
-    }
-  </div>
-);
-
 @connect(state => ({
-  role: state.role,
+  terms: state.terms,
 }))
 @Form.create()
 export default class Terms extends PureComponent {
   state = {
+    modalVisible: false,
     currentItem: {},
     q: '',
   };
@@ -26,7 +20,7 @@ export default class Terms extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'role/fetch',
+      type: 'terms/fetch',
     });
   }
 
@@ -52,7 +46,7 @@ export default class Terms extends PureComponent {
     }
 
     dispatch({
-      type: 'role/fetch',
+      type: 'terms/fetch',
       payload: params,
     });
   };
@@ -61,35 +55,49 @@ export default class Terms extends PureComponent {
     const { dispatch } = this.props;
     const { q } = this.state;
     dispatch({
-      type: 'role/fetch',
+      type: 'terms/fetch',
       payload: {
         q,
       },
     });
   }
 
-  handleOk = (e) => {
-    e.stopPropagation();
+  handleOk = () => {
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
       this.props.dispatch({
-        type: 'role/add',
+        type: 'terms/add',
         payload: {
           ...values,
         },
       });
+      this.setState({ modalVisible: false });
       message.success('保存成功');
       form.resetFields();
     });
   }
 
+  handleCancel = () => {
+    this.setState({ modalVisible: false });
+  }
+
+  openModal = (record) => {
+    console.log(record);
+    if (record) {
+      this.setState({ currentItem: record });
+    } else {
+      this.setState({ currentItem: {} });
+    }
+    this.setState({ modalVisible: true });
+  }
+
   handleRemove = (record) => {
     const ids = [record.id];
     this.props.dispatch({
-      type: 'role/remove',
+      type: 'terms/remove',
       payload: {
         ids,
       },
@@ -101,20 +109,6 @@ export default class Terms extends PureComponent {
     this.setState({
       q: e.target.value,
     });
-  }
-
-  handleChange = (value, key, column) => {
-    console.log(column);
-  }
-
-  renderColumns(text, record, column) {
-    return (
-      <EditableCell
-        editable={record.editable}
-        value={text}
-        onChange={value => this.handleChange(value, record.key, column)}
-      />
-    );
   }
 
   renderForm() {
@@ -134,44 +128,56 @@ export default class Terms extends PureComponent {
             onChange={this.handleInputChange}
           />
           <Button type="primary" icon="search" onClick={this.handleSearch}>查询</Button>
+          <Button type="primary" onClick={this.openModal}>新增</Button>
         </Col>
       </Row>
     );
   }
 
   render() {
-    const { role: { loading, data, loadingSave } } = this.props;
-    const { currentItem } = this.state;
+    const { terms: { loading, data, loadingSave } } = this.props;
+    const { modalVisible, currentItem } = this.state;
     const { getFieldDecorator } = this.props.form;
 
     const columns = [{
       title: '名称',
       dataIndex: 'name',
-      render: (text, record) => this.renderColumns(text, record, 'name'),
     }, {
       title: '代码',
       dataIndex: 'code',
-      render: (text, record) => this.renderColumns(text, record, 'code'),
+    }, {
+      title: '类别',
+      dataIndex: 'taxonomy',
+      render: (text) => {
+        if (text === 'category') {
+          return '分类';
+        } else if (text === 'tag') {
+          return '标签';
+        }
+      },
+    }, {
+      title: '父名称',
+      dataIndex: 'pname',
     }, {
       title: '操作',
       key: 'action',
-      render: (text, record) => {
-        const { editable } = record;
-        return (
-          <div>
-            {
-              editable ?
-                <span>
-                  <a onClick={() => this.save(record.key)}>Save</a>
-                  <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(record.key)}>
-                    <a>Cancel</a>
-                  </Popconfirm>
-                </span>
-                : <a onClick={() => this.edit(record.key)}>Edit</a>
-            }
-          </div>
-        );
-      },
+      render: (text, record) => (
+        <span>
+          <a onClick={() => {
+            this.openModal(record);
+          }}
+          >编辑
+          </a>
+          <Popconfirm
+            title="确定要删除吗?"
+            onConfirm={() => {
+              this.handleRemove(record);
+            }}
+          >
+            &nbsp;&nbsp;<a>删除</a>
+          </Popconfirm>
+        </span>
+      ),
     }];
 
     const paginationProps = {
@@ -184,20 +190,41 @@ export default class Terms extends PureComponent {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 3 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 12 },
+        sm: { span: 14 },
       },
     };
 
     return (
-      <Card title="分类" bordered={false} style={{ margin: '0' }}>
-        <Row gutter={2}>
-          <Col md={8}>
-            <h3>添加分类</h3><br />
-            <Form layout="vertical" onSubmit={this.handleOk}>
+      <Card title="角色管理" bordered={false} style={{ margin: '0' }}>
+        <div className={styles.tableList}>
+          <div className={styles.tableListForm}>
+            {this.renderForm()}
+          </div>
+          <Table
+            columns={columns}
+            dataSource={data.rows}
+            loading={loading}
+            rowKey="id"
+            size="small"
+            pagination={paginationProps}
+            onChange={this.handleTableChange}
+          />
+          <Modal
+            title="角色编辑"
+            visible={modalVisible}
+            onCancel={this.handleCancel}
+            footer={[
+              <Button key="back" onClick={this.handleCancel}>取消</Button>,
+              <Button key="submit" htmlType="submit" type="primary" loading={loadingSave} onClick={this.handleOk}>
+                保存
+              </Button>,
+            ]}
+          >
+            <Form layout="vertical">
               {getFieldDecorator('id', {
                 initialValue: currentItem.id,
               })(
@@ -207,7 +234,7 @@ export default class Terms extends PureComponent {
                 {getFieldDecorator('name', {
                   initialValue: currentItem.name,
                   rules: [{
-                    required: true, message: '请输入名称',
+                    required: true, message: '请输入角色名称',
                   }],
                 })(
                   <Input />
@@ -225,7 +252,7 @@ export default class Terms extends PureComponent {
               </Form.Item>
               <Form.Item label="类别" {...formItemLayout}>
                 {getFieldDecorator('taxonomy', {
-                  initialValue: currentItem.taxonomy,
+                  initialValue: currentItem.taxonomy || 'category',
                   rules: [{
                     required: true, message: '请选择类别',
                   }],
@@ -236,28 +263,9 @@ export default class Terms extends PureComponent {
                   </Radio.Group>
                 )}
               </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loadingSave}>
-                  保存
-                </Button>
-              </Form.Item>
             </Form>
-          </Col>
-          <Col md={15}>
-            <div>
-              {this.renderForm()}
-            </div>
-            <Table
-              columns={columns}
-              dataSource={data.rows}
-              loading={loading}
-              rowKey="id"
-              size="small"
-              pagination={paginationProps}
-              onChange={this.handleTableChange}
-            />
-          </Col>
-        </Row>
+          </Modal>
+        </div>
       </Card>
     );
   }

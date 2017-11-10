@@ -1,8 +1,12 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-export async function queryRole(params) {
-  return request(`/api/role/list?${stringify(params)}`);
+export async function queryTerms(params) {
+  return request(`/api/terms/list?${stringify(params)}`);
+}
+
+export async function queryTermsAll() {
+  return request('/api/terms/all');
 }
 
 export async function addTermsTaxonomy(params) {
@@ -11,13 +15,6 @@ export async function addTermsTaxonomy(params) {
     body: {
       ...params,
     },
-  });
-}
-
-export async function removeRole(params) {
-  return request('/api/role/remove', {
-    method: 'POST',
-    body: params,
   });
 }
 
