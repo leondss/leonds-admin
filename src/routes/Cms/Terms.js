@@ -4,6 +4,15 @@ import { Button, Card, Col, Form, Input, message, Popconfirm, Row, Table, Radio 
 
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
+const EditableCell = ({ editable, value, onChange }) => (
+  <div>
+    {editable
+      ? <Input style={{ margin: '-5px 0' }} value={value} onChange={e => onChange(e.target.value)} />
+      : value
+    }
+  </div>
+);
+
 @connect(state => ({
   role: state.role,
 }))
@@ -59,7 +68,8 @@ export default class Terms extends PureComponent {
     });
   }
 
-  handleOk = () => {
+  handleOk = (e) => {
+    e.stopPropagation();
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (err) {
@@ -93,6 +103,20 @@ export default class Terms extends PureComponent {
     });
   }
 
+  handleChange = (value, key, column) => {
+    console.log(column);
+  }
+
+  renderColumns(text, record, column) {
+    return (
+      <EditableCell
+        editable={record.editable}
+        value={text}
+        onChange={value => this.handleChange(value, record.key, column)}
+      />
+    );
+  }
+
   renderForm() {
     const ColProps = {
       xs: 24,
@@ -123,29 +147,31 @@ export default class Terms extends PureComponent {
     const columns = [{
       title: '名称',
       dataIndex: 'name',
+      render: (text, record) => this.renderColumns(text, record, 'name'),
     }, {
       title: '代码',
       dataIndex: 'code',
+      render: (text, record) => this.renderColumns(text, record, 'code'),
     }, {
       title: '操作',
       key: 'action',
-      render: (text, record) => (
-        <span>
-          <a onClick={() => {
-            this.openModal(record);
-          }}
-          >编辑
-          </a>
-          <Popconfirm
-            title="确定要删除吗?"
-            onConfirm={() => {
-              this.handleRemove(record);
-            }}
-          >
-            &nbsp;&nbsp;<a>删除</a>
-          </Popconfirm>
-        </span>
-      ),
+      render: (text, record) => {
+        const { editable } = record;
+        return (
+          <div>
+            {
+              editable ?
+                <span>
+                  <a onClick={() => this.save(record.key)}>Save</a>
+                  <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(record.key)}>
+                    <a>Cancel</a>
+                  </Popconfirm>
+                </span>
+                : <a onClick={() => this.edit(record.key)}>Edit</a>
+            }
+          </div>
+        );
+      },
     }];
 
     const paginationProps = {
@@ -158,7 +184,7 @@ export default class Terms extends PureComponent {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 3 },
+        sm: { span: 4 },
       },
       wrapperCol: {
         xs: { span: 24 },
@@ -181,7 +207,7 @@ export default class Terms extends PureComponent {
                 {getFieldDecorator('name', {
                   initialValue: currentItem.name,
                   rules: [{
-                    required: true, message: '请输入角色名称',
+                    required: true, message: '请输入名称',
                   }],
                 })(
                   <Input />
