@@ -4,6 +4,7 @@ import Analysis from '../routes/Dashboard/Analysis';
 
 import Role from '../routes/System/Role';
 import Posts from '../routes/Cms/Posts';
+import PostsEdit from '../routes/Cms/PostsEdit';
 
 const data = [{
   component: BasicLayout,
@@ -33,9 +34,13 @@ const data = [{
     path: 'content',
     icon: 'windows',
     children: [{
-      name: '文章',
+      name: '文章列表',
       path: 'posts',
       component: Posts,
+    }, {
+      name: '文章发布',
+      path: 'posts-edit',
+      component: PostsEdit,
     }],
   }],
 }];
