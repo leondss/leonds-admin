@@ -1,0 +1,24 @@
+body {
+  font-family: "Microsoft YaHei UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+
+.el-menu-demo {
+  padding-left: 15px;
+  margin: 0;
+}
+
+.el-header {
+  padding: 0;
+}
+
+.el-input__inner, .el-button--mini, .el-button--small {
+  border-radius: 0;
+  font-family: "Microsoft YaHei UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.el-date-editor .el-range-input, .el-date-editor .el-range-separator, .el-picker-panel__shortcut {
+  font-family: "Microsoft YaHei UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
