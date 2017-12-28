@@ -22,3 +22,20 @@ body {
 .el-date-editor .el-range-input, .el-date-editor .el-range-separator, .el-picker-panel__shortcut {
   font-family: "Microsoft YaHei UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.treeview-menu {
+  padding-left: 0;
+}
+.sidebar-menu>li {
+  font-size: 14px;
+}
+
+.treeview-menu > li > a {
+  padding: 10px 0 10px 42px;
+  display: block;
+  font-size: 14px;
+}
+
+.treeview-menu > li > a:hover {
+  background-color: #337ab7;
+}
