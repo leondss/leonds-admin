@@ -20,6 +20,7 @@ Vue.use(ElementUI, {size: 'small'})
 
 Vue.use(api)
 
+/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
