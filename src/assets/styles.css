@@ -2,7 +2,6 @@ body {
   font-family: "Microsoft YaHei UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding: 0;
   margin: 0;
-  font-size: 12px;
 }
 
 .el-menu-demo {
@@ -26,7 +25,8 @@ body {
 .treeview-menu {
   padding-left: 0;
 }
-.sidebar-menu>li {
+
+.sidebar-menu > li {
   font-size: 14px;
 }
 
@@ -38,4 +38,8 @@ body {
 
 .treeview-menu > li > a:hover {
   background-color: #337ab7;
+}
+
+.content-wrapper {
+  background-color: #fdfdfd;
 }

@@ -29,8 +29,12 @@
               <li class="active">
                 <router-link to="/user">用户管理</router-link>
               </li>
-              <li><a href="index.html">角色管理</a></li>
-              <li><a href="index.html">资源管理</a></li>
+              <li>
+                <router-link to="/role">角色管理</router-link>
+              </li>
+              <li>
+                <router-link to="/resource">资源管理</router-link>
+              </li>
               <li><a href="index.html">权限配置</a></li>
             </ul>
           </li>

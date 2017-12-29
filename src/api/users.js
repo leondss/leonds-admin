@@ -12,6 +12,10 @@ function saveUser (params) {
   return axios.post('/api/user/save', params)
 }
 
+function remove (params) {
+  return axios.post('/api/user/remove', params)
+}
+
 export default {
-  getUserList, getUser, saveUser
+  getUserList, getUser, saveUser, remove
 }

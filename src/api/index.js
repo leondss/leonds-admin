@@ -1,7 +1,9 @@
 import users from './users'
+import roles from './roles'
+import resources from './resources'
 
 const apis = {
-  users
+  users, roles, resources
 }
 
 const install = function (Vue) {
