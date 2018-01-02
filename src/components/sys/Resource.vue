@@ -11,10 +11,12 @@
       <el-col :span="8">
         <el-tree
           :props="columns"
-          :load="loadNode"
-          lazy
+          :data="treeData"
           node-key="id"
           ref="tree"
+          @node-click="onNodeClick"
+          default-expand-all
+          :expand-on-click-node="false"
           highlight-current>
         </el-tree>
       </el-col>
@@ -44,6 +46,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="save()" :loading="editLoading">保存</el-button>
+            <el-button type="primary" @click="remove()" :loading="editLoading" v-show="isShow()">删除</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -81,15 +84,14 @@
             {required: true, message: '请选择类型', trigger: 'blur'}
           ]
         },
-        editLoading: false
+        editLoading: false,
+        treeData: []
       }
     },
     methods: {
-      loadNode (node, resolve) {
-        let id = node.data ? node.data.id : ''
-        this.$api.resources.getList(id).then(result => {
-          resolve(result.data)
-        })
+      onNodeClick (data, node) {
+        const parentName = node.parent.data && node.parent.data.name
+        Object.assign(this.editForm, data, {parentName: parentName})
       },
       onNew () {
         const node = this.$refs.tree.getCurrentNode()
@@ -111,7 +113,7 @@
               this.editLoading = false
               if (result.data && result.data.status === 0) {
                 this.$message.success('保存成功')
-                this.$refs.tree.reload()
+                this.load()
               } else {
                 this.$alert(result.data.message)
               }
@@ -120,7 +122,34 @@
             return false
           }
         })
+      },
+      load () {
+        this.$api.resources.getList().then(result => {
+          this.treeData = result.data
+        })
+      },
+      isShow () {
+        return !!this.editForm.id
+      },
+      remove () {
+        this.$confirm('确认删除吗？')
+          .then(() => {
+            this.$api.resources.remove([this.editForm.id]).then(result => {
+              if (result.data && result.data.status === 0) {
+                this.$message.success('删除成功')
+                this.load()
+                this.editForm = {
+                  type: 'MENU'
+                }
+              } else {
+                this.$alert(result.data.message)
+              }
+            })
+          })
       }
+    },
+    created: function () {
+      this.load()
     }
   }
 </script>

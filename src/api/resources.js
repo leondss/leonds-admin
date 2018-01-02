@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-function getList (pid) {
-  return axios.get(`/api/resource/list?pid=${pid}`)
+function getList () {
+  return axios.get(`/api/resource/tree`)
 }
 
 function getAll () {
@@ -17,7 +17,7 @@ function save (params) {
 }
 
 function remove (params) {
-  return axios.post('/api/role/remove', params)
+  return axios.post('/api/resource/remove', params)
 }
 
 export default {

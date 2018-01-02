@@ -50,6 +50,16 @@
             <el-form-item label="代码" prop="code">
               <el-input v-model="editForm.code"></el-input>
             </el-form-item>
+            <el-form-item label="权限">
+              <el-tree
+                :props="columns"
+                :data="treeData"
+                node-key="id"
+                ref="tree"
+                show-checkbox
+                default-expand-all>
+              </el-tree>
+            </el-form-item>
             <el-form-item>
               <el-button @click="dialogVisible = false">取消</el-button>
               <el-button type="primary" @click="save" :loading="editLoading">保存</el-button>
@@ -88,7 +98,13 @@
         rowCount: 10,
         total: 0,
         currentId: '',
-        editLoading: false
+        editLoading: false,
+        resourceIds: [],
+        columns: {
+          id: 'id',
+          label: 'name'
+        },
+        treeData: []
       }
     },
     methods: {
@@ -122,13 +138,21 @@
           } else {
             this.editForm = {}
           }
+          this.$api.resources.getList().then(result => {
+            this.treeData = result.data
+          })
         })
       },
       save () {
         this.$refs['editForm'].validate((valid) => {
           if (valid) {
             this.editLoading = true
-            this.$api.roles.save(this.editForm).then(result => {
+            const resourceIds = this.$refs.tree.getCheckedNodes().map(item => { return item.data.id })
+            console.log(resourceIds)
+            this.$api.roles.save({
+              role: this.editForm,
+              resourceIds: resourceIds
+            }).then(result => {
               this.editLoading = false
               this.dialogVisible = false
               if (result.data && result.data.status === 0) {
