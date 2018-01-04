@@ -18,9 +18,18 @@
         <el-table
           :data="rows"
           style="width: 100%">
-          <el-table-column prop="name" label="名称"></el-table-column>
-          <el-table-column prop="code" label="代码"></el-table-column>
-          <el-table-column prop="creationTime" label="创建时间"></el-table-column>
+          <el-table-column prop="title" label="标题"></el-table-column>
+          <el-table-column prop="status" label="状态">
+            <template slot-scope="scope">
+              {{getRowStatus(scope.row.status)}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="goodCount" label="好评"></el-table-column>
+          <el-table-column prop="badCount" label="差评"></el-table-column>
+          <el-table-column prop="viewCount" label="阅读"></el-table-column>
+          <el-table-column prop="commentCount" label="评论"></el-table-column>
+          <el-table-column prop="publishTime" width="150" label="发布时间"></el-table-column>
+          <el-table-column prop="creationTime" width="150" label="创建时间"></el-table-column>
           <el-table-column
             label="操作">
             <template slot-scope="scope">
@@ -29,33 +38,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-dialog
-          title="角色编辑"
-          :visible.sync="dialogVisible"
-          width="40%">
-          <el-form :model="editForm" :rules="rules" ref="editForm" label-width="80px">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="editForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="代码" prop="code">
-              <el-input v-model="editForm.code"></el-input>
-            </el-form-item>
-            <el-form-item label="权限">
-              <el-tree
-                :props="columns"
-                :data="treeData"
-                node-key="id"
-                ref="tree"
-                show-checkbox
-                default-expand-all>
-              </el-tree>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="dialogVisible = false">取消</el-button>
-              <el-button type="primary" @click="save" :loading="editLoading">保存</el-button>
-            </el-form-item>
-          </el-form>
-        </el-dialog>
       </el-col>
     </el-row>
     <el-row style="margin-top: 10px">
@@ -116,7 +98,7 @@
         if (this.searchForm.text) {
           params.q = this.searchForm.text
         }
-        this.$api.roles.getList(params).then(result => {
+        this.$api.posts.getList(params).then(result => {
           this.rows = result.data.rows
           this.total = result.data.total
         })
@@ -128,6 +110,13 @@
       handleCurrentChange (page) {
         this.current = page
         this.search()
+      },
+      getRowStatus (status) {
+        if (status === 'draft') {
+          return '草稿'
+        } else if (status === 'publish') {
+          return '已发布'
+        }
       },
       edit (id) {
         this.currentId = id
@@ -145,7 +134,7 @@
             this.treeData = result.data
           }).then(() => {
             this.$api.roles.getResource(id).then(result => {
-              this.$refs.tree.setCheckedKeys(result.data)
+              this.$refs.tree.setCheckedKeys(result.data, true)
             })
           })
         })

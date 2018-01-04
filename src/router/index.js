@@ -5,6 +5,8 @@ import App from '../components/App.vue'
 import User from '../components/sys/User.vue'
 import Role from '../components/sys/Role.vue'
 import Resource from '../components/sys/Resource.vue'
+import Posts from '../components/cms/Posts.vue'
+import PostsEdit from '../components/cms/PostsEdit.vue'
 
 Vue.use(Router)
 
@@ -34,6 +36,16 @@ export default new Router({
       path: '/resource',
       name: 'Resource',
       component: Resource
+    },
+    {
+      path: '/posts',
+      name: 'Posts',
+      component: Posts
+    },
+    {
+      path: '/posts-edit',
+      name: 'PostsEdit',
+      component: PostsEdit
     }
   ]
 })

@@ -34,16 +34,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="[10,20,50,100]"
-          :page-size="rowCount"
-          :background="true"
-          layout="total, sizes, prev, pager, next"
-          :total="total">
-        </el-pagination>
         <el-dialog
           title="用户编辑"
           :visible.sync="dialogVisible"
@@ -69,6 +59,20 @@
             </el-form-item>
           </el-form>
         </el-dialog>
+      </el-col>
+    </el-row>
+    <el-row style="margin-top: 10px">
+      <el-col :span="24">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="current"
+          :page-sizes="[10,20,50,100]"
+          :page-size="rowCount"
+          :background="true"
+          layout="total, sizes, prev, pager, next"
+          :total="total">
+        </el-pagination>
       </el-col>
     </el-row>
   </section>
