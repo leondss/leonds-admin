@@ -29,16 +29,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="current"
-          :page-sizes="[10,20,50,100]"
-          :page-size="rowCount"
-          :background="true"
-          layout="total, sizes, prev, pager, next"
-          :total="total">
-        </el-pagination>
         <el-dialog
           title="角色编辑"
           :visible.sync="dialogVisible"
@@ -57,6 +47,7 @@
                 node-key="id"
                 ref="tree"
                 show-checkbox
+                :default-checked-keys="defaultKeys"
                 default-expand-all>
               </el-tree>
             </el-form-item>
@@ -66,6 +57,20 @@
             </el-form-item>
           </el-form>
         </el-dialog>
+      </el-col>
+    </el-row>
+    <el-row style="margin-top: 10px">
+      <el-col :span="24">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="current"
+          :page-sizes="[10,20,50,100]"
+          :page-size="rowCount"
+          :background="true"
+          layout="total, sizes, prev, pager, next"
+          :total="total">
+        </el-pagination>
       </el-col>
     </el-row>
   </section>
@@ -99,12 +104,12 @@
         total: 0,
         currentId: '',
         editLoading: false,
-        resourceIds: [],
         columns: {
           id: 'id',
           label: 'name'
         },
-        treeData: []
+        treeData: [],
+        defaultKeys: []
       }
     },
     methods: {
@@ -140,6 +145,10 @@
           }
           this.$api.resources.getList().then(result => {
             this.treeData = result.data
+          }).then(() => {
+            this.$api.roles.getResource(id).then(result => {
+              this.defaultKeys = result.data
+            })
           })
         })
       },
@@ -147,8 +156,7 @@
         this.$refs['editForm'].validate((valid) => {
           if (valid) {
             this.editLoading = true
-            const resourceIds = this.$refs.tree.getCheckedNodes().map(item => { return item.data.id })
-            console.log(resourceIds)
+            const resourceIds = this.$refs.tree.getCheckedKeys()
             this.$api.roles.save({
               role: this.editForm,
               resourceIds: resourceIds

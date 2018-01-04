@@ -20,6 +20,10 @@ function remove (params) {
   return axios.post('/api/role/remove', params)
 }
 
+function getResource (id) {
+  return axios.get(`/api/role/get-role-resource?id=${id}`)
+}
+
 export default {
-  getList, get, save, remove, getAll
+  getList, get, save, remove, getAll, getResource
 }
