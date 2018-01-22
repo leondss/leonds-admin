@@ -43,3 +43,6 @@ body {
 .content-wrapper {
   background-color: #fdfdfd;
 }
+.v-note-wrapper{
+  min-height: 400px !important;
+}
