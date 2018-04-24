@@ -1,75 +1,74 @@
 <template>
-  <div class="wrapper">
+<el-container>
+  <el-header>Header</el-header>
+  <el-container>
+    <el-aside width="200px">
+       <el-menu
+        default-active="2"
+        class="el-menu-vertical-demo"
+        @open="handleOpen"
+        @close="handleClose"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b">
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>导航一</span>
+          </template>
+          <el-menu-item-group>
+            <template slot="title">分组一</template>
+            <el-menu-item index="1-1">选项1</el-menu-item>
+            <el-menu-item index="1-2">选项2</el-menu-item>
+          </el-menu-item-group>
+          <el-menu-item-group title="分组2">
+            <el-menu-item index="1-3">选项3</el-menu-item>
+          </el-menu-item-group>
+          <el-submenu index="1-4">
+            <template slot="title">选项4</template>
+            <el-menu-item index="1-4-1">选项1</el-menu-item>
+          </el-submenu>
+        </el-submenu>
+        <el-menu-item index="2">
+          <i class="el-icon-menu"></i>
+          <span slot="title">导航二</span>
+        </el-menu-item>
+        <el-menu-item index="3" disabled>
+          <i class="el-icon-document"></i>
+          <span slot="title">导航三</span>
+        </el-menu-item>
+        <el-menu-item index="4">
+          <i class="el-icon-setting"></i>
+          <span slot="title">导航四</span>
+        </el-menu-item>
+      </el-menu>      
+    </el-aside>
+    <el-main>Main</el-main>
+  </el-container>
+</el-container>
 
-    <header class="main-header">
-      <a href="index2.html" class="logo">
-        <span class="logo-mini"><b>L</b></span>
-        <span class="logo-lg"><b>Leon</b></span>
-      </a>
-      <nav class="navbar navbar-static-top">
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-          <span class="sr-only">Toggle navigation</span>
-        </a>
-      </nav>
-    </header>
-    <!-- Left side column. contains the logo and sidebar -->
-    <aside class="main-sidebar">
-      <!-- sidebar: style can be found in sidebar.less -->
-      <section class="sidebar">
-        <ul class="sidebar-menu" data-widget="tree">
-          <li class="header">主菜单</li>
-          <li class="active treeview">
-            <a href="#">
-              <i class="fa fa-dashboard"></i> <span>系统管理</span>
-              <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-            </a>
-            <ul class="treeview-menu">
-              <li class="active">
-                <router-link to="/user">用户管理</router-link>
-              </li>
-              <li>
-                <router-link to="/role">角色管理</router-link>
-              </li>
-              <li>
-                <router-link to="/resource">资源管理</router-link>
-              </li>
-            </ul>
-          </li>
-          <li class="treeview">
-            <a href="#">
-              <i class="fa fa-dashboard"></i> <span>内容管理</span>
-              <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-            </a>
-            <ul class="treeview-menu">
-              <li class="active">
-                <router-link to="/posts">文章管理</router-link>
-                <router-link to="/posts-edit">文章发布</router-link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </section>
-      <!-- /.sidebar -->
-    </aside>
-
-    <div class="content-wrapper">
-      <router-view></router-view>
-    </div>
-    <div class="control-sidebar-bg"></div>
-  </div>
 </template>
 
 <script>
   export default {
-    name: 'App'
+    name: 'App',
+    methods: {
+      handleOpen (key, keyPath) {
+        console.log(key, keyPath)
+      },
+      handleClose (key, keyPath) {
+        console.log(key, keyPath)
+      }
+    }
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+  .el-header, .el-footer {
+    background-color: #545c64;
+    color: #fff;
+    text-align: center;
+    line-height: 40px;
+  }
 </style>
