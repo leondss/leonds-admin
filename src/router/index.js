@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '../components/Login.vue'
-import App from '../components/App.vue'
-import User from '../components/sys/User.vue'
-import Role from '../components/sys/Role.vue'
-import Resource from '../components/sys/Resource.vue'
-import Posts from '../components/cms/Posts.vue'
-import PostsEdit from '../components/cms/PostsEdit.vue'
+import Login from '../views/Login.vue'
+import Main from '../views/Main.vue'
+import User from '../views/sys/User.vue'
+import Role from '../views/sys/Role.vue'
+import Resource from '../views/sys/Resource.vue'
+import Posts from '../views/cms/Posts.vue'
+import PostsEdit from '../views/cms/PostsEdit.vue'
 
 Vue.use(Router)
 
@@ -14,8 +14,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'App',
-      component: App
+      name: 'Main',
+      component: Main
     },
     {
       path: '/login',
