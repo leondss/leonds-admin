@@ -15,6 +15,7 @@
       height: 45px;
       line-height: 45px;
       color: #fff;
+      font-size: 12px;
       background-color: #424f63;
       .icon {
         width: 16px;
@@ -64,13 +65,20 @@
     margin-left: 220px;
     border: none;
     min-height: 50px;
+    line-height: 50px;
     border-radius: 0;
     .topbar-toggle {
       float: left;
-      background-color: transparent;
-      background-image: none;
-      padding: 15px 15px;
+      background: transparent none;
+      padding: 0 15px;
       font-family: fontAwesome;
+      .icon {
+        color: #fff;
+      }
+      &:hover {
+        background-color: #367fa9;
+        color: #f6f6f6;
+      }
     }
   }
 }
@@ -79,4 +87,8 @@
   position: relative;
   margin-left: 220px;
   padding: 15px;
+  z-index: 800;
+  transition: transform .3s ease-in-out, margin .3s ease-in-out;
+  display: block;
+  margin-top: 50px;
 }

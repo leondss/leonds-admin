@@ -1,18 +1,18 @@
 <template>
   <el-container>
     <el-header class="main-header" height="50px">
-        <a href="index2.html" class="banner-text">
-          <span><b>Leonds</b></span>
+      <a href="index2.html" class="banner-text">
+        <span><b>Leonds</b></span>
+      </a>
+
+      <nav class="topbar">
+        <a href="#" class="topbar-toggle">
+          <i class="icon fa fa-bars"></i>
         </a>
+        <div class="navbar-custom-menu">
 
-        <nav class="topbar">
-          <a href="#" class="topbar-toggle">
-            <i class="icon fa bars"></i>
-          </a>
-          <div class="navbar-custom-menu">
-
-          </div>
-        </nav>
+        </div>
+      </nav>
     </el-header>
     <el-container>
       <el-aside width="220" class="main-menu">
@@ -50,7 +50,9 @@
           </div>
         </el-menu>
       </el-aside>
-      <el-main class="main-body">Main</el-main>
+      <el-main class="main-body">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -64,12 +66,12 @@
           path: '/home',
           icon: 'fa-home'
         }, {
-          title: '表格管理',
-          path: '/table',
-          icon: 'fa-table',
+          title: '系统管理',
+          path: '',
+          icon: 'fa-cog',
           child: [{
-            title: '基本表格',
-            path: '/table/base'
+            title: '用户管理',
+            path: '/user'
           }, {
             title: '排序表格',
             path: '/table/sort'

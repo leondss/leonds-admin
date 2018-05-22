@@ -13,39 +13,41 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'Main',
-      component: Main
-    },
-    {
       path: '/login',
       name: 'Login',
       component: Login
     },
     {
-      path: '/user',
-      name: 'User',
-      component: User
-    },
-    {
-      path: '/role',
-      name: 'Role',
-      component: Role
-    },
-    {
-      path: '/resource',
-      name: 'Resource',
-      component: Resource
-    },
-    {
-      path: '/posts',
-      name: 'Posts',
-      component: Posts
-    },
-    {
-      path: '/posts-edit',
-      name: 'PostsEdit',
-      component: PostsEdit
+      path: '/',
+      name: 'Main',
+      component: Main,
+      children: [
+        {
+          path: '/user',
+          name: 'User',
+          component: User
+        },
+        {
+          path: '/role',
+          name: 'Role',
+          component: Role
+        },
+        {
+          path: '/resource',
+          name: 'Resource',
+          component: Resource
+        },
+        {
+          path: '/posts',
+          name: 'Posts',
+          component: Posts
+        },
+        {
+          path: '/posts-edit',
+          name: 'PostsEdit',
+          component: PostsEdit
+        }
+      ]
     }
   ]
 })
