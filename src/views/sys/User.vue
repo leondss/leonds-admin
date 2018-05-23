@@ -8,7 +8,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
-            <el-button @click="edit()">新增</el-button>
+            <el-button type="success" @click="edit">新增</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -19,10 +19,9 @@
           :data="rows"
           style="width: 100%">
           <el-table-column prop="username" label="用户名"></el-table-column>
-          <el-table-column prop="nickName" label="昵称"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
-              {{scope.row.status === 'on' ? '正常' : '禁用'}}
+              {{scope.row.status === 'ON' ? '正常' : '禁用'}}
             </template>
           </el-table-column>
           <el-table-column prop="creationTime" label="创建时间"></el-table-column>
@@ -31,6 +30,8 @@
             <template slot-scope="scope">
               <el-button @click="edit(scope.row.id)" type="text">编辑</el-button>
               <el-button @click="remove(scope.row.id)" type="text" size="small">删除</el-button>
+              <el-button @click="enable(scope.row.id)" type="text" size="small">启用</el-button>
+              <el-button @click="disable(scope.row.id)" type="text" size="small">禁用</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -44,9 +45,6 @@
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input v-model="editForm.password"></el-input>
-            </el-form-item>
-            <el-form-item label="昵称" prop="nickName">
-              <el-input v-model="editForm.nickName"></el-input>
             </el-form-item>
             <el-form-item label="角色">
               <el-checkbox-group v-model="roleIds">
@@ -66,9 +64,9 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="current"
+          :current-page="page"
           :page-sizes="[10,20,50,100]"
-          :page-size="rowCount"
+          :page-size="size"
           :background="true"
           layout="total, sizes, prev, pager, next"
           :total="total">
@@ -89,8 +87,7 @@
         editForm: {
           id: '',
           username: '',
-          password: '',
-          nickName: ''
+          password: ''
         },
         rules: {
           username: [
@@ -102,8 +99,8 @@
         },
         dialogVisible: false,
         rows: [],
-        current: 1,
-        rowCount: 10,
+        page: 1,
+        size: 10,
         total: 0,
         currentId: '',
         editLoading: false,
@@ -113,21 +110,21 @@
     },
     methods: {
       search () {
-        const params = {current: this.current - 1, rowCount: this.rowCount}
+        const params = {page: this.page - 1, size: this.size}
         if (this.searchForm.text) {
-          params.q = this.searchForm.text
+          params.text = this.searchForm.text
         }
         this.$api.users.getUserList(params).then(result => {
-          this.rows = result.data.rows
-          this.total = result.data.total
+          this.rows = result.content
+          this.total = result.totalElements
         })
       },
       handleSizeChange (size) {
-        this.rowCount = size
+        this.size = size
         this.search()
       },
       handleCurrentChange (page) {
-        this.current = page
+        this.page = page
         this.search()
       },
       edit (id) {
@@ -170,17 +167,40 @@
         })
       },
       remove (id) {
-        this.$confirm('确认删除吗？')
-          .then(() => {
-            this.$api.users.remove([id]).then(result => {
-              if (result.data && result.data.status === 0) {
-                this.$message.success('删除成功')
-                this.handleCurrentChange(1)
-              } else {
-                this.$alert(result.data.message)
-              }
-            })
+        this.$confirm('确定要删除此用户吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$api.users.remove([id]).then(() => {
+            this.$message.success('删除成功')
+            this.handleCurrentChange(1)
+          }).catch(err => {
+            this.$alert(err)
           })
+        }).catch(() => {})
+      },
+      enable (id) {
+        this.$confirm('确定要启用吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$api.users.enable([id]).then(() => {
+            this.$message.success('启用成功')
+            this.handleCurrentChange(1)
+          }).catch(err => {
+            this.$alert(err)
+          })
+        }).catch(() => {})
+      },
+      disable (id) {
+        this.$confirm('确定要禁用吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$api.users.disable([id]).then(() => {
+            this.$message.success('禁用成功')
+            this.handleCurrentChange(1)
+          }).catch(err => {
+            this.$alert(err)
+          })
+        }).catch(() => {})
       }
     },
     created: function () {

@@ -1,21 +1,29 @@
-import axios from 'axios'
+import http from './http'
 
 function getUserList (params) {
-  return axios.get('/api/user/list', {params: params})
+  return http.get('/api/sysuser/page', {params: params})
 }
 
 function getUser (id) {
-  return axios.get(`/api/user/get?id=${id}`)
+  return http.get(`/api/sysuser/${id}`)
 }
 
 function saveUser (params) {
-  return axios.post('/api/user/save', params)
+  return http.post('/api/sysuser/save', params)
 }
 
 function remove (params) {
-  return axios.post('/api/user/remove', params)
+  return http.post('/api/sysuser/remove', params)
+}
+
+function enable (params) {
+  return http.post('/api/sysuser/enable', params)
+}
+
+function disable (params) {
+  return http.post('/api/sysuser/disable', params)
 }
 
 export default {
-  getUserList, getUser, saveUser, remove
+  getUserList, getUser, saveUser, remove, enable, disable
 }

@@ -1,27 +1,27 @@
-import axios from 'axios'
+import http from './http'
 
 function getList (params) {
-  return axios.get('/api/role/list', {params: params})
+  return http.get('/api/sysrole/list', {params: params})
 }
 
 function getAll () {
-  return axios.get('/api/role/all')
+  return http.get('/api/sysrole/all')
 }
 
 function get (id) {
-  return axios.get(`/api/role/get?id=${id}`)
+  return http.get(`/api/sysrole/get?id=${id}`)
 }
 
 function save (params) {
-  return axios.post('/api/role/save', params)
+  return http.post('/api/sysrole/save', params)
 }
 
 function remove (params) {
-  return axios.post('/api/role/remove', params)
+  return http.post('/api/sysrole/remove', params)
 }
 
 function getResource (id) {
-  return axios.get(`/api/role/get-role-resource?id=${id}`)
+  return http.get(`/api/sysrole/get-role-resource?id=${id}`)
 }
 
 export default {
