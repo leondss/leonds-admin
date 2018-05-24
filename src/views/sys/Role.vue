@@ -9,6 +9,8 @@
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
             <el-button @click="edit()">新增</el-button>
+            <el-button @click="remove" v-show="selectRows.length > 0">删除</el-button>
+            <el-button @click="showPermDialog" v-show="selectRows.length > 0">设置权限</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -18,16 +20,10 @@
         <el-table
           :data="rows"
           style="width: 100%">
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="index" width="50"></el-table-column>
           <el-table-column prop="name" label="名称"></el-table-column>
-          <el-table-column prop="code" label="代码"></el-table-column>
           <el-table-column prop="creationTime" label="创建时间"></el-table-column>
-          <el-table-column
-            label="操作">
-            <template slot-scope="scope">
-              <el-button @click="edit(scope.row.id)" type="text">编辑</el-button>
-              <el-button @click="remove(scope.row.id)" type="text" size="small">删除</el-button>
-            </template>
-          </el-table-column>
         </el-table>
         <el-dialog
           title="角色编辑"
@@ -36,9 +32,6 @@
           <el-form :model="editForm" :rules="rules" ref="editForm" label-width="80px">
             <el-form-item label="名称" prop="name">
               <el-input v-model="editForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="代码" prop="code">
-              <el-input v-model="editForm.code"></el-input>
             </el-form-item>
             <el-form-item label="权限">
               <el-tree
@@ -63,9 +56,9 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="current"
+          :current-page="page"
           :page-sizes="[10,20,50,100]"
-          :page-size="rowCount"
+          :page-size="size"
           :background="true"
           layout="total, sizes, prev, pager, next"
           :total="total">
@@ -85,21 +78,17 @@
         },
         editForm: {
           id: '',
-          name: '',
-          code: ''
+          name: ''
         },
         rules: {
           name: [
             {required: true, message: '请输入名称', trigger: 'blur'}
-          ],
-          code: [
-            {required: true, message: '请输入代码', trigger: 'blur'}
           ]
         },
         dialogVisible: false,
         rows: [],
-        current: 1,
-        rowCount: 10,
+        page: 1,
+        size: 10,
         total: 0,
         currentId: '',
         editLoading: false,
@@ -112,22 +101,28 @@
     },
     methods: {
       search () {
-        const params = {current: this.current - 1, rowCount: this.rowCount}
+        const params = {page: this.page - 1, size: this.size}
         if (this.searchForm.text) {
-          params.q = this.searchForm.text
+          params.text = this.searchForm.text
         }
         this.$api.roles.getList(params).then(result => {
-          this.rows = result.data.rows
-          this.total = result.data.total
+          this.rows = result.content
+          this.total = result.totalElements
         })
       },
       handleSizeChange (size) {
-        this.rowCount = size
+        this.size = size
         this.search()
       },
       handleCurrentChange (page) {
-        this.current = page
+        this.page = page
         this.search()
+      },
+      handleSelectionChange (val) {
+        this.selectRows = val
+      },
+      getSelectIds () {
+        return this.selectRows.map(row => row.id)
       },
       edit (id) {
         this.currentId = id
@@ -185,6 +180,9 @@
               }
             })
           })
+      },
+      showPermDialog () {
+        console.log(1)
       }
     },
     created: function () {

@@ -24,6 +24,10 @@ function disable (params) {
   return http.post('/api/sysuser/disable', params)
 }
 
+function saveUserRole (params) {
+  return http.post('/api/sysuser/save/role', params)
+}
+
 export default {
-  getUserList, getUser, saveUser, remove, enable, disable
+  getUserList, getUser, saveUser, remove, enable, disable, saveUserRole
 }

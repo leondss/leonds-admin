@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 function getList () {
-  return axios.get(`/api/resource/tree`)
+  return axios.get(`/api/sysresource/tree`)
 }
 
 function getAll () {

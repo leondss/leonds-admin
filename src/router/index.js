@@ -23,17 +23,17 @@ export default new Router({
       component: Main,
       children: [
         {
-          path: '/user',
+          path: '/system/user',
           name: 'User',
           component: User
         },
         {
-          path: '/role',
+          path: '/system/role',
           name: 'Role',
           component: Role
         },
         {
-          path: '/resource',
+          path: '/system/resource',
           name: 'Resource',
           component: Resource
         },

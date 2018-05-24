@@ -71,10 +71,13 @@
           icon: 'fa-cog',
           child: [{
             title: '用户管理',
-            path: '/user'
+            path: '/system/user'
           }, {
-            title: '排序表格',
-            path: '/table/sort'
+            title: '角色管理',
+            path: '/system/role'
+          }, {
+            title: '资源管理',
+            path: '/system/resource'
           }]
         }, {
           title: '图表管理',

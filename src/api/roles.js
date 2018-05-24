@@ -1,7 +1,7 @@
 import http from './http'
 
 function getList (params) {
-  return http.get('/api/sysrole/list', {params: params})
+  return http.get('/api/sysrole/page', {params: params})
 }
 
 function getAll () {
@@ -9,7 +9,7 @@ function getAll () {
 }
 
 function get (id) {
-  return http.get(`/api/sysrole/get?id=${id}`)
+  return http.get(`/api/sysrole/${id}`)
 }
 
 function save (params) {

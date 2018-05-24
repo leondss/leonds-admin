@@ -124,8 +124,8 @@
         })
       },
       load () {
-        this.$api.resources.getList().then(result => {
-          this.treeData = result.data
+        this.$api.resources.getList().then(data => {
+          this.treeData = data
         })
       },
       isShow () {

@@ -8,3 +8,14 @@ $--font-size-base: 12px;
 $--size-base: 12px;
 $--pagination-border-radius: 0px;
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
+.el-form-item__content button {
+  margin-left: 0 !important;
+}
+
+.el-form-item__label {
+  font-size: $--font-size-base !important;
+}
+
+.el-checkbox__label {
+  font-size: $--font-size-base !important;
+}
