@@ -1,25 +1,29 @@
-import axios from 'axios'
+import http from './http'
 
 function getList () {
-  return axios.get(`/api/sysresource/tree`)
+  return http.get(`/api/sysresource/tree`)
 }
 
 function getAll () {
-  return axios.get('/api/role/all')
+  return http.get('/api/role/all')
 }
 
 function get (id) {
-  return axios.get(`/api/role/get?id=${id}`)
+  return http.get(`/api/role/get?id=${id}`)
 }
 
 function save (params) {
-  return axios.post('/api/resource/save', params)
+  return http.post('/api/resource/save', params)
 }
 
 function remove (params) {
-  return axios.post('/api/resource/remove', params)
+  return http.post('/api/sysresource/remove', params)
+}
+
+function getTreeByPid (pid) {
+  return http.get(`/api/sysresource/tree?pid=${pid}`)
 }
 
 export default {
-  getList, get, save, remove, getAll
+  getList, get, save, remove, getAll, getTreeByPid
 }

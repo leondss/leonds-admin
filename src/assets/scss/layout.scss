@@ -27,7 +27,6 @@
       }
       &.is-active, &:hover {
         background-color: #353f4f !important;
-        color: #2386bc;
       }
     }
   }
@@ -90,4 +89,17 @@
   transition: transform .3s ease-in-out, margin .3s ease-in-out;
   display: block;
   margin-top: 50px;
+}
+
+.custom-tree-node {
+  -ms-flex: 1;
+  flex: 1;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  font-size: 12px;
+  padding-right: 8px;
 }
