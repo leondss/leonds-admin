@@ -1,7 +1,7 @@
 import http from './http'
 
 function getList (params) {
-  return http.get('/api/sysrole/page', {params: params})
+  return http.get('/api/sysrole/page', { params: params })
 }
 
 function getAll () {
@@ -21,9 +21,17 @@ function remove (params) {
 }
 
 function getResource (id) {
-  return http.get(`/api/sysrole/get-role-resource?id=${id}`)
+  return http.get(`/api/sysrole/resource?id=${id}`)
+}
+
+function getDataPerms (roleId) {
+  return http.get(`/api/sysrole/data/perms?roleId=${roleId}`)
+}
+
+function saveResource (params) {
+  return http.post('/api/sysrole/save/resource', params)
 }
 
 export default {
-  getList, get, save, remove, getAll, getResource
+  getList, get, save, remove, getAll, getResource, saveResource, getDataPerms
 }

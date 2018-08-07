@@ -4,18 +4,61 @@ $--border-radius-circle: 0;
 $--border-radius-small: 0;
 $--header-padding: 0;
 $--color-primary: #3c8dbc;
-$--font-size-base: 12px;
-$--size-base: 12px;
+$--font-size-base: 14px;
+$--size-base: $--font-size-base;
 $--pagination-border-radius: 0px;
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-form-item__content button {
   margin-left: 0 !important;
 }
 
+.cell button {
+  margin-left: 0 !important;
+}
+
 .el-form-item__label {
-  font-size: $--font-size-base !important;
+  font-size: 12px !important;
 }
 
 .el-checkbox__label {
   font-size: $--font-size-base !important;
+}
+
+.el-card {
+  border-radius: $--border-radius-base;
+}
+
+.el-tabs__content {
+  padding: 0 10px 10px 10px;
+}
+
+.el-button--small span {
+  font-size: 12px !important;
+}
+
+.el-card__header {
+  padding: 10px 20px !important;
+  font-weight: bold;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409eff;
+  font-size: 12px;
+}
+
+.pull-right {
+  float: right;
+}
+
+.el-tabs__nav {
+  border-radius: 0 !important;
+}
+
+.el-tabs__item .el-icon-close {
+  margin-left: 8px;
+}
+
+.el-upload__input {
+  display: none !important;
 }

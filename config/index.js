@@ -11,7 +11,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api/**': {
+      '/wkl/**': {
         target: 'http://localhost:8000',
         secure: false,
         changeOrigin: false,

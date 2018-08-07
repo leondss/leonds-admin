@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <el-card shadow="never">
     <el-row>
       <el-col :span="24">
         <el-form :inline="true" :model="searchForm">
@@ -9,10 +9,6 @@
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
             <el-button type="success" @click="edit()">新增</el-button>
-            <el-button @click="remove" v-show="selectRows.length > 0">删除</el-button>
-            <el-button @click="enable" v-show="selectRows.length > 0">启用</el-button>
-            <el-button @click="disable" v-show="selectRows.length > 0">禁用</el-button>
-            <el-button @click="showRoleDialog" v-show="selectRows.length > 0">设置角色</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -22,17 +18,38 @@
         <el-table
           :data="rows"
           stripe
-          @selection-change="handleSelectionChange"
+          v-loading="loading"
           style="width: 100%">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="index" width="50"></el-table-column>
           <el-table-column prop="username" label="用户名"></el-table-column>
+          <el-table-column prop="realName" label="姓名"></el-table-column>
+          <el-table-column prop="mobile" label="手机号"></el-table-column>
+          <el-table-column prop="storeName" label="所属门店"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
-              {{scope.row.status === 'ON' ? '正常' : '禁用'}}
+              {{scope.row.status === 1 ? '正常' : '禁用'}}
             </template>
           </el-table-column>
           <el-table-column prop="creationTime" label="创建时间"></el-table-column>
+          <el-table-column
+            label="操作"
+            width="120">
+            <template slot-scope="scope">
+              <el-dropdown>
+                <span class="el-dropdown-link">
+                  更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="remove(scope.row.id)">删除</el-dropdown-item>
+                  <el-dropdown-item @click.native="edit(scope.row.id)">编辑</el-dropdown-item>
+                  <el-dropdown-item @click.native="enable(scope.row.id)">启用</el-dropdown-item>
+                  <el-dropdown-item @click.native="disable(scope.row.id)">禁用</el-dropdown-item>
+                  <el-dropdown-item @click.native="showRoleDialog(scope.row.id)">设置角色</el-dropdown-item>
+                  <el-dropdown-item @click.native="resetPassword(scope.row.id)">重置密码</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
         </el-table>
         <el-dialog
           title="用户编辑"
@@ -40,14 +57,31 @@
           width="40%">
           <el-form :model="editForm" :rules="rules" ref="editForm" label-width="80px">
             <el-form-item label="用户名" prop="username">
-              <el-input v-model="editForm.username"></el-input>
+              <el-input v-model="editForm.username" :disabled="!!currentId"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
+            <el-form-item label="密码" prop="password" v-if="!currentId">
               <el-input v-model="editForm.password"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名" prop="realName">
+              <el-input v-model="editForm.realName"></el-input>
+            </el-form-item>
+            <el-form-item label="手机号" prop="mobile">
+              <el-input v-model="editForm.mobile"></el-input>
+            </el-form-item>
+            <el-form-item label="所属门店" prop="store">
+              <el-select v-model="editForm.storeId" placeholder="请选择">
+                <el-option
+                  v-for="item in stores"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="角色" prop="roleIds">
               <el-checkbox-group v-model="editForm.roleIds">
-                <el-checkbox v-for="item in roles" :label="item.id" name="roleIds" :key="item.id">{{item.name}}</el-checkbox>
+                <el-checkbox v-for="item in roles" :label="item.id" name="roleIds" :key="item.id">{{item.name}}
+                </el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item>
@@ -67,7 +101,8 @@
 
             <el-form-item label="角色" prop="roleIds">
               <el-checkbox-group v-model="editForm.roleIds">
-                <el-checkbox v-for="item in roles" :label="item.id" name="roleIds" :key="item.id">{{item.name}}</el-checkbox>
+                <el-checkbox v-for="item in roles" :label="item.id" name="roleIds" :key="item.id">{{item.name}}
+                </el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item>
@@ -92,13 +127,19 @@
         </el-pagination>
       </el-col>
     </el-row>
-  </section>
+  </el-card>
 </template>
 
 <script>
   export default {
     name: 'User',
     data () {
+      const checkPwd = (rule, value, callback) => {
+        if (!value && !this.currentId) {
+          return callback(new Error('密码不能为空'))
+        }
+        callback()
+      }
       return {
         searchForm: {
           text: ''
@@ -107,17 +148,29 @@
           id: '',
           username: '',
           password: '',
+          realName: '',
+          mobile: '',
+          storeId: '',
           roleIds: []
         },
         rules: {
           username: [
-            {required: true, message: '请输入用户名', trigger: 'blur'}
+            { required: true, message: '请输入用户名', trigger: 'blur' }
           ],
           password: [
-            {required: true, message: '请输入密码', trigger: 'blur'}
+            { required: true, validator: checkPwd, trigger: 'blur' }
+          ],
+          realName: [
+            { required: true, message: '请输入真实姓名', trigger: 'blur' }
+          ],
+          mobile: [
+            { required: true, message: '请输入手机号', trigger: 'blur' }
+          ],
+          storeId: [
+            { required: true, message: '请选择所属门店', trigger: 'blur' }
           ],
           roleIds: [
-            {type: 'array', required: true, message: '请至少选择一个角色', trigger: 'change'}
+            { type: 'array', required: true, message: '请至少选择一个角色', trigger: 'change' }
           ]
         },
         dialogVisible: false,
@@ -128,20 +181,23 @@
         currentId: '',
         editLoading: false,
         roles: [],
-        selectRows: [],
         roleDialogVisible: false,
-        editRoleLoading: false
+        editRoleLoading: false,
+        stores: [],
+        loading: false
       }
     },
     methods: {
       search () {
-        const params = {page: this.page - 1, size: this.size}
+        this.loading = true
+        const params = { page: this.page - 1, size: this.size }
         if (this.searchForm.text) {
           params.text = this.searchForm.text
         }
         this.$api.users.getUserList(params).then(result => {
-          this.rows = result.content
-          this.total = result.totalElements
+          this.rows = result.rows
+          this.total = result.total
+          this.loading = false
         })
       },
       handleSizeChange (size) {
@@ -151,12 +207,6 @@
       handleCurrentChange (page) {
         this.page = page
         this.search()
-      },
-      handleSelectionChange (val) {
-        this.selectRows = val
-      },
-      getSelectIds () {
-        return this.selectRows.map(row => row.id)
       },
       edit (id) {
         this.currentId = id
@@ -187,6 +237,7 @@
               this.$message.success('保存成功')
               this.handleCurrentChange(1)
             }).catch(err => {
+              this.editLoading = false
               this.$alert(err)
             })
           } else {
@@ -194,11 +245,11 @@
           }
         })
       },
-      remove () {
+      remove (id) {
         this.$confirm('确定要删除吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          this.$api.users.remove(this.getSelectIds()).then(() => {
+          this.$api.users.remove([id]).then(() => {
             this.$message.success('删除成功')
             this.handleCurrentChange(1)
           }).catch(err => {
@@ -206,11 +257,22 @@
           })
         }).catch(() => {})
       },
-      enable () {
+      resetPassword (id) {
+        this.$confirm('确定要重置用户密码吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$api.users.resetPassword(id).then(() => {
+            this.$alert('密码重置成功，初始密码为123456')
+          }).catch(err => {
+            this.$alert(err)
+          })
+        }).catch(() => {})
+      },
+      enable (id) {
         this.$confirm('确定要启用吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          this.$api.users.enable(this.getSelectIds()).then(() => {
+          this.$api.users.enable([id]).then(() => {
             this.$message.success('启用成功')
             this.handleCurrentChange(1)
           }).catch(err => {
@@ -218,11 +280,11 @@
           })
         }).catch(() => {})
       },
-      disable () {
+      disable (id) {
         this.$confirm('确定要禁用吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          this.$api.users.disable(this.getSelectIds()).then(() => {
+          this.$api.users.disable([id]).then(() => {
             this.$message.success('禁用成功')
             this.handleCurrentChange(1)
           }).catch(err => {
@@ -230,15 +292,10 @@
           })
         }).catch(() => {})
       },
-      showRoleDialog () {
-        if (this.selectRows.length !== 1) {
-          this.$message.info('请选择一条记录')
-          return
-        }
+      showRoleDialog (userId) {
         this.roleDialogVisible = true
-        const id = this.getSelectIds()[0]
         this.$nextTick(() => {
-          this.$api.users.getUser(id).then(data => {
+          this.$api.users.getUser(userId).then(data => {
             Object.assign(this.editForm, data)
           })
         })
@@ -259,13 +316,21 @@
       }
     },
     created: function () {
+
+    },
+    activated: function () {
       this.search()
       this.$api.roles.getAll().then(data => {
         this.roles = data
+      })
+
+      this.$api.stores.getAll().then(data => {
+        this.stores = data
       })
     }
   }
 </script>
 
-<style>
+<style scoped>
+
 </style>

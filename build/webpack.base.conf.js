@@ -89,13 +89,5 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
-  },
-  // 增加一个plugins
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'windows.jQuery': 'jquery'
-    })
-  ]
+  }
 }

@@ -1,0 +1,41 @@
+.sidebar-menu > li > a {
+  padding: 15px 10px 15px 15px;
+  display: block;
+}
+
+.treeview-menu > li > a {
+  padding: 12px 5px 12px 42px;
+  display: block;
+  font-size: 14px;
+}
+
+.skin-blue .sidebar-menu > li:hover > a,
+.skin-blue .sidebar-menu > li.active > a,
+.skin-blue .sidebar-menu > li.menu-open > a {
+  color: #ffffff;
+  background: #1e282c;
+  border-left-color: #3c8dbc;
+}
+
+.skin-blue .treeview-menu > li > a:hover {
+  background-color: #3c8dbc;
+}
+
+.treeview-menu {
+  padding-left: 0;
+}
+
+.skin-blue .sidebar-menu > li > .treeview-menu {
+  margin: 0;
+}
+
+.content {
+  min-height: 250px;
+  padding: 0;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.content-wrapper {
+  background-color: #fff;
+}

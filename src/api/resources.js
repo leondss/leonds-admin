@@ -13,7 +13,7 @@ function get (id) {
 }
 
 function save (params) {
-  return http.post('/api/resource/save', params)
+  return http.post('/api/sysresource/save', params)
 }
 
 function remove (params) {

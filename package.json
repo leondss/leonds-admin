@@ -1,5 +1,5 @@
 {
-  "name": "my-project",
+  "name": "ekl",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "Leon <muchuanj@163.com>",
@@ -11,12 +11,17 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "admin-lte": "^2.4.3",
     "axios": "^0.17.1",
     "element-ui": "^2.0.9",
     "font-awesome": "^4.7.0",
-    "mavon-editor": "^2.4.16",
+    "moment": "^2.22.2",
+    "nprogress": "^0.2.0",
+    "v-viewer": "^1.1.0",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-tabs": "^0.3.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

@@ -3,21 +3,29 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui'
 import api from './api'
-import mavonEditor from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
-import 'font-awesome/scss/font-awesome.scss'
-import './assets/scss/main.scss'
+import store from './store'
+import permission from './directive/permission'
+import perm from './commons/perm'
+import Viewer from 'v-viewer'
+
+import './lib/css'
+import './lib/script'
 
 Vue.config.productionTip = false
-Vue.use(ElementUI, {size: 'small'})
+Vue.use(ElementUI, { size: 'small' })
 
 Vue.use(api)
-Vue.use(mavonEditor)
+Vue.use(perm)
+
+Vue.directive('perm', permission)
+
+Vue.use(Viewer)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
-  components: {App}
+  components: { App }
 })

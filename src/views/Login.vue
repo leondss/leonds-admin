@@ -1,22 +1,25 @@
 <template>
-  <div>
-    <div class="login-box">
-      <div class="login-logo">
-        <b>管理系统登录</b>
-      </div>
-      <div class="login-box-body">
-        <el-form :model="loginForm" :rules="rules" ref="loginForm">
-          <el-form-item prop="username">
-            <el-input v-model="loginForm.username" placeholder="用户名"></el-input>
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input v-model="loginForm.password" placeholder="密码"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+  <div class="login-box">
+    <div class="login-logo">
+      <b>万客来报货系统</b>
+    </div>
+    <div class="login-box-body">
+      <el-form :model="loginForm" :rules="rules" ref="loginForm">
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" placeholder="用户名" clearable
+                    @keyup.enter.native="submitForm('loginForm')"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input type="password" v-model="loginForm.password" placeholder="密码" clearable
+                    @keyup.enter.native="submitForm('loginForm')"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" class="login-button"
+                     @click="submitForm('loginForm')"
+                     :loading="editLoading">登录
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -32,32 +35,44 @@
         },
         rules: {
           username: [
-            {required: true, message: '请输入用户名', trigger: 'blur'}
+            { required: true, message: '请输入用户名', trigger: 'blur' }
           ],
           password: [
-            {required: true, message: '请输入密码', trigger: 'blur'}
+            { required: true, message: '请输入密码', trigger: 'blur' }
           ]
-        }
+        },
+        editLoading: false
       }
     },
     methods: {
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.$router.push('/')
-          } else {
-            console.log('error submit!!')
+          if (!valid) {
             return false
           }
+          this.editLoading = true
+          this.$store.dispatch('login', this.loginForm).then(() => {
+            this.editLoading = false
+            this.$router.push('/')
+          }).catch((err) => {
+            this.editLoading = false
+            this.$alert(err.message)
+          })
         })
       }
+    },
+    beforeCreate: function () {
+      window.$('body').addClass('login-page')
+    },
+    beforeDestroy: function () {
+      window.$('body').removeClass('login-page')
     }
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-  body {
-    background: #ecedef;
+<style scoped>
+  .login-button {
+    width: 100%;
   }
 </style>
