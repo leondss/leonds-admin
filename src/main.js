@@ -7,6 +7,7 @@ import store from './store'
 import permission from './directive/permission'
 import perm from './commons/perm'
 import Viewer from 'v-viewer'
+import VueParticles from 'vue-particles'
 
 import './lib/css'
 import './lib/script'
@@ -20,6 +21,8 @@ Vue.use(perm)
 Vue.directive('perm', permission)
 
 Vue.use(Viewer)
+
+Vue.use(VueParticles)
 
 /* eslint-disable no-new */
 new Vue({
