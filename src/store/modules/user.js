@@ -7,9 +7,7 @@ const user = {
     token: '',
     info: {},
     perms: [],
-    dataPerms: {},
     resources: [],
-    store: {},
     routers: [],
     menus: []
   },
@@ -26,17 +24,11 @@ const user = {
     setResources: (state, resources) => {
       state.resources = resources
     },
-    setStore: (state, store) => {
-      state.store = store
-    },
     setRouters: (state, routers) => {
       state.routers = routers
     },
     setMenus: (state, menus) => {
       state.menus = menus
-    },
-    setDataPerms: (state, dataPerms) => {
-      state.dataPerms = dataPerms
     }
   },
   actions: {
@@ -59,7 +51,6 @@ const user = {
           commit('setInfo', {})
           commit('setPerms', [])
           commit('setResources', [])
-          commit('setStore', {})
           commit('setRouters', [])
           commit('setMenus', [])
           commit('setTabItems', [])
@@ -77,7 +68,6 @@ const user = {
         commit('setInfo', {})
         commit('setPerms', [])
         commit('setResources', [])
-        commit('setStore', {})
         commit('setRouters', [])
         commit('setMenus', [])
         commit('setTabItems', [])
@@ -92,8 +82,6 @@ const user = {
           commit('setInfo', data.user)
           commit('setPerms', data.perms)
           commit('setResources', data.resources)
-          commit('setStore', data.store)
-          commit('setDataPerms', data.dataPerms)
           resolve(data)
         }).catch(error => {
           reject(error)

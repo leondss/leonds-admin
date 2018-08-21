@@ -24,14 +24,10 @@ function getResource (id) {
   return http.get(`/api/sysrole/resource?id=${id}`)
 }
 
-function getDataPerms (roleId) {
-  return http.get(`/api/sysrole/data/perms?roleId=${roleId}`)
-}
-
 function saveResource (params) {
   return http.post('/api/sysrole/save/resource', params)
 }
 
 export default {
-  getList, get, save, remove, getAll, getResource, saveResource, getDataPerms
+  getList, get, save, remove, getAll, getResource, saveResource
 }

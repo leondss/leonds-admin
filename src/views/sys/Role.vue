@@ -69,48 +69,6 @@
                 highlight-current>
               </el-tree>
             </el-tab-pane>
-            <el-tab-pane label="数据权限" name="tabData">
-              <el-form :model="permForm" ref="permForm" label-width="120px">
-                <el-form-item label="数据范围" prop="name">
-                  <el-radio-group v-model="permForm.row">
-                    <el-radio :key="item.value" v-for="item in permRows" :label="item.value">{{item.name}}</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item label="可查看的列">
-                  <el-select
-                    v-model="permForm.cell"
-                    multiple
-                    collapse-tags
-                    style="width:300px"
-                    placeholder="请选择">
-                    <el-option
-                      v-for="item in permCells"
-                      :key="item.value"
-                      :label="item.name"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="可查看的分类">
-                  <el-select
-                    v-model="permForm.category"
-                    multiple
-                    collapse-tags
-                    style="width:300px"
-                    placeholder="请选择">
-                    <el-option
-                      v-for="item in goodsCategory"
-                      :key="item.value"
-                      :label="item.name"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="数据最大天数">
-                  <el-input v-model="permForm.maxDay" clearable style="width: 100px"/>
-                </el-form-item>
-              </el-form>
-            </el-tab-pane>
           </el-tabs>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisiblePerm = false">取 消</el-button>
@@ -137,8 +95,6 @@
 </template>
 
 <script>
-  import { DICT_TYPE, PERM_CELLS, PERM_ROWS } from '../../commons/contants'
-
   export default {
     name: 'Role',
     data () {
@@ -150,12 +106,6 @@
           id: '',
           name: '',
           description: ''
-        },
-        permForm: {
-          row: '',
-          cell: '',
-          category: '',
-          maxDay: ''
         },
         rules: {
           name: [
@@ -176,10 +126,7 @@
         treeData: [],
         loading: false,
         activeName: 'tabMenu',
-        currentRoleId: '',
-        permRows: PERM_ROWS,
-        permCells: PERM_CELLS,
-        goodsCategory: []
+        currentRoleId: ''
       }
     },
     methods: {
@@ -253,13 +200,6 @@
           this.$api.roles.getResource(id).then(result => {
             this.$refs.tree.setCheckedKeys(result)
           })
-
-          this.$api.roles.getDataPerms(id).then(result => {
-            this.permForm.cell = result.cell
-            this.permForm.row = result.row && result.row[0]
-            this.permForm.category = result.category
-            this.permForm.maxDay = result.maxDay && result.maxDay[0]
-          })
         })
       },
       load (node, resolve) {
@@ -277,38 +217,9 @@
           this.$message.error('请配置菜单')
           return
         }
-        let perms = []
-        if (this.permForm.row) {
-          perms.push({
-            perm: this.permForm.row,
-            permType: 1
-          })
-        }
-        for (let i = 0; i < this.permForm.cell.length; i++) {
-          perms.push({
-            perm: this.permForm.cell[i],
-            permType: 2
-          })
-        }
-
-        for (let i = 0; i < this.permForm.category.length; i++) {
-          perms.push({
-            perm: this.permForm.category[i],
-            permType: 3
-          })
-        }
-
-        if (this.permForm.maxDay) {
-          perms.push({
-            perm: this.permForm.maxDay,
-            permType: 4
-          })
-        }
-
         this.$api.roles.saveResource({
           id: this.currentRoleId,
-          resourceIds: resourceIds,
-          perms: perms
+          resourceIds: resourceIds
         }).then(() => {
           this.dialogVisiblePerm = false
           this.$message.success('保存成功')
@@ -321,9 +232,6 @@
     },
     activated: function () {
       this.search()
-      this.$api.dicts.getDictItems(DICT_TYPE.GOODS_CATEGORY).then(data => {
-        this.goodsCategory = data
-      })
     }
   }
 </script>

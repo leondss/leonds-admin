@@ -94,12 +94,7 @@
         return this.$store.getters.menus || []
       },
       displayName () {
-        if (this.$store.getters.realName) {
-          const storeName = this.$store.getters.storeName
-          const store = storeName ? `(${storeName})` : ''
-          return `${this.$store.getters.realName}${store}`
-        }
-        return ''
+        return this.$store.getters.realName
       },
       tabs () {
         return this.$store.getters.tabs

@@ -33,7 +33,7 @@ function resetPassword (id) {
 }
 
 function login ({ username, password }) {
-  return http.post(`/login?username=${username}&password=${password}`)
+  return http.post(`/api/login?username=${username}&password=${password}`)
 }
 
 function getUserInfo (token) {
@@ -41,11 +41,11 @@ function getUserInfo (token) {
 }
 
 function logout () {
-  return http.post(`/logout`)
+  return http.post(`/api/logout`)
 }
 
 function modifyPassword (params) {
-  return http.post(`/modify/password?newPassword=${params.newPassword}&oldPassword=${params.oldPassword}&confirmPassword=${params.confirmPassword}`)
+  return http.post(`/api/modify/password?newPassword=${params.newPassword}&oldPassword=${params.oldPassword}&confirmPassword=${params.confirmPassword}`)
 }
 
 export default {

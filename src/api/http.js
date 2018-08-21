@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { MessageBox } from 'element-ui'
 import { getToken } from '../commons/token'
+import { TOKEN_NAME } from '../commons/contants'
 import store from '../store'
 
 let http = axios.create({
@@ -10,7 +11,7 @@ let http = axios.create({
 
 /* 过滤请求 */
 http.interceptors.request.use((config) => {
-  config.headers['Wkl-Auth-Token'] = getToken()
+  config.headers[TOKEN_NAME] = getToken()
   return config
 })
 /* 过滤响应 */

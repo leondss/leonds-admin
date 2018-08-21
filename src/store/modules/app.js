@@ -1,10 +1,8 @@
-import msgs from '../../api/msgs'
 import { findTab } from '../../commons/tabs'
 
 const app = {
   state: {
     menuOpenStatus: false,
-    messageCount: 0,
     tabs: [],
     activeTabIndex: '',
     messages: []
@@ -12,9 +10,6 @@ const app = {
   mutations: {
     setMenuOpenStatus: (state, status) => {
       state.menuOpenStatus = status
-    },
-    setMessageCount: (state, messageCount) => {
-      state.messageCount = messageCount
     },
     setTabItems: (state, tabItems) => {
       state.tabs = tabItems
@@ -30,9 +25,6 @@ const app = {
     },
     setActiveTabIndex (state, index) {
       state.activeTabIndex = index
-    },
-    setMessages (state, messages) {
-      state.messages = messages
     }
   },
   actions: {
@@ -41,28 +33,6 @@ const app = {
     },
     hideMenu ({ commit }) {
       commit('setMenuOpenStatus', false)
-    },
-    getUnReadMessageCount ({ commit }) {
-      return new Promise((resolve, reject) => {
-        msgs.getUnReadCount().then(count => {
-          commit('setMessageCount', count)
-          resolve(count)
-        }).catch((err) => {
-          reject(err)
-        })
-      })
-    },
-    getUnReadMessage ({ commit }) {
-      return new Promise((resolve, reject) => {
-        msgs.getUserMessage({
-          status: 1
-        }).then(result => {
-          commit('setMessages', result.rows)
-          resolve(result.rows)
-        }).catch((err) => {
-          reject(err)
-        })
-      })
     },
     appendTabItem ({ commit }, index) {
       const tabItem = findTab(index)

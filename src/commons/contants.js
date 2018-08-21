@@ -11,82 +11,6 @@ export const DICT_TYPE = {
   PERM_CELL: 'PERM_CELL'
 }
 
-export const GOODS_STATUS = {
-  NEW: 1,
-  PUBLISH: 2,
-  OUT: 3
-}
-export const ORDER_STATUS = {
-  NEW: 1,
-  SUBMIT: 2,
-  AUDITED: 3,
-  FINISH: 4
-}
-
-export const ORDER_DETAIL_STATUS = {
-  NEW: 1,
-  SUBMIT: 2
-}
-
-export const WHETHER = {
-  N: 1,
-  Y: 2
-}
-
-export const PERM_ROWS = [
-  {
-    name: '全部',
-    value: 'ALL'
-  },
-  {
-    name: '自己',
-    value: 'ONESELF'
-  },
-  {
-    name: '门店',
-    value: 'STORE'
-  }
-]
-
-export const PERM_CELLS = [
-  {
-    name: '商品名称',
-    value: 'goodsName'
-  },
-  {
-    name: '报货数量',
-    value: 'qty'
-  },
-  {
-    name: '实收数量',
-    value: 'qtyReal'
-  },
-  {
-    name: '实送数量',
-    value: 'qtySend'
-  },
-  {
-    name: '采购数量',
-    value: 'qtyPurchase'
-  },
-  {
-    name: '验收数量',
-    value: 'qtyPurchaseRel'
-  },
-  {
-    name: '进价',
-    value: 'purchasePrice'
-  },
-  {
-    name: '收货重量',
-    value: 'bhWeight'
-  },
-  {
-    name: '采购重量',
-    value: 'cgWeight'
-  }
-]
-
 export const SHORTCUTS = [{
   text: '今天',
   onClick (picker) {
@@ -126,3 +50,5 @@ export const SHORTCUTS = [{
     picker.$emit('pick', [start, end])
   }
 }]
+
+export const TOKEN_NAME = 'Leonds-Auth-Token'

@@ -24,7 +24,6 @@
           <el-table-column prop="username" label="用户名"></el-table-column>
           <el-table-column prop="realName" label="姓名"></el-table-column>
           <el-table-column prop="mobile" label="手机号"></el-table-column>
-          <el-table-column prop="storeName" label="所属门店"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
               {{scope.row.status === 1 ? '正常' : '禁用'}}
