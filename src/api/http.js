@@ -4,7 +4,7 @@ import { getToken } from '../commons/token'
 import store from '../store'
 
 let http = axios.create({
-  baseURL: '/wkl',
+  baseURL: '/',
   timeout: 60 * 1000
 })
 
