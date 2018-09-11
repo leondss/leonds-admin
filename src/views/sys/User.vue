@@ -67,16 +67,6 @@
             <el-form-item label="手机号" prop="mobile">
               <el-input v-model="editForm.mobile"></el-input>
             </el-form-item>
-            <el-form-item label="所属门店" prop="store">
-              <el-select v-model="editForm.storeId" placeholder="请选择">
-                <el-option
-                  v-for="item in stores"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item label="角色" prop="roleIds">
               <el-checkbox-group v-model="editForm.roleIds">
                 <el-checkbox v-for="item in roles" :label="item.id" name="roleIds" :key="item.id">{{item.name}}
@@ -165,9 +155,6 @@
           mobile: [
             { required: true, message: '请输入手机号', trigger: 'blur' }
           ],
-          storeId: [
-            { required: true, message: '请选择所属门店', trigger: 'blur' }
-          ],
           roleIds: [
             { type: 'array', required: true, message: '请至少选择一个角色', trigger: 'change' }
           ]
@@ -182,7 +169,6 @@
         roles: [],
         roleDialogVisible: false,
         editRoleLoading: false,
-        stores: [],
         loading: false
       }
     },
@@ -321,10 +307,6 @@
       this.search()
       this.$api.roles.getAll().then(data => {
         this.roles = data
-      })
-
-      this.$api.stores.getAll().then(data => {
-        this.stores = data
       })
     }
   }
