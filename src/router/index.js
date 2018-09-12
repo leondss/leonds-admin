@@ -6,6 +6,7 @@ import User from '../views/sys/User.vue'
 import Role from '../views/sys/Role.vue'
 import Resource from '../views/sys/Resource.vue'
 import ModifyPassword from '../views/sys/ModifyPassword'
+import Category from '../views/cms/Category'
 
 Vue.use(Router)
 
@@ -41,6 +42,11 @@ export default new Router({
           path: '/sys/modify/password',
           name: 'ModifyPassword',
           component: ModifyPassword
+        },
+        {
+          path: '/cms/category',
+          name: 'Category',
+          component: Category
         }
       ]
     }

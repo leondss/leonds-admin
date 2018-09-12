@@ -18,6 +18,10 @@ const tabs = [
   {
     title: '修改密码',
     name: '/sys/modify/password'
+  },
+  {
+    title: '分类管理',
+    name: '/cms/category'
   }
 ]
 
