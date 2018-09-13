@@ -8,6 +8,7 @@ import permission from './directive/permission'
 import perm from './commons/perm'
 import Viewer from 'v-viewer'
 import VueParticles from 'vue-particles'
+import mavonEditor from 'mavon-editor'
 
 import './lib/css'
 import './lib/script'
@@ -23,6 +24,8 @@ Vue.directive('perm', permission)
 Vue.use(Viewer)
 
 Vue.use(VueParticles)
+
+Vue.use(mavonEditor)
 
 /* eslint-disable no-new */
 new Vue({

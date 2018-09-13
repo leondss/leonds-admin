@@ -7,6 +7,7 @@ import Role from '../views/sys/Role.vue'
 import Resource from '../views/sys/Resource.vue'
 import ModifyPassword from '../views/sys/ModifyPassword'
 import Category from '../views/cms/Category'
+import PostsEdit from '../views/cms/PostsEdit'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/posts/edit',
+      name: 'PostsEdit',
+      component: PostsEdit
     },
     {
       path: '/',

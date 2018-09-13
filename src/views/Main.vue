@@ -12,6 +12,9 @@
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
           <span class="sr-only">Toggle navigation</span>
         </a>
+        <router-link to="/posts/edit" class="link-title">
+          写文章
+        </router-link>
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
             <li class="dropdown" v-bind:class="{ open: personDialogStatus }"
