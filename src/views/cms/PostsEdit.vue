@@ -55,7 +55,11 @@
         tags: []
       }
     },
-    methods: {},
+    methods: {
+      doSave () {
+
+      }
+    },
     created: function () {
       this.$api.cate.getList().then(result => {
         this.categories = result
