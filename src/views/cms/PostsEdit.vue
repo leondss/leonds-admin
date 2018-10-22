@@ -4,37 +4,26 @@
       <el-col :span="24">
         <el-form :inline="true" :model="editForm">
           <el-form-item label="标题">
-            <el-input v-model="editForm.title" placeholder="请输入文章标题" clearable></el-input>
+            <el-input v-model="editForm.title" placeholder="请输入文章标题" clearable style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="分类">
-            <el-input v-model="editForm.cate" clearable></el-input>
+            <el-select v-model="inputCate" clearable>
+              <el-option v-for="item in categories" :label="item.name" :value="item.id" :key="item.id"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="标签">
-            <el-tag
-              :key="tag"
-              v-for="tag in editForm.tag"
-              closable
-              :disable-transitions="false"
-              size="medium"
-              :hit="true"
-              type="success"
-              @close="handleClose(tag)">
-              {{tag}}
-            </el-tag>
-            <el-input
-              class="input-new-tag"
-              v-if="inputVisible"
-              v-model="inputValue"
-              ref="saveTagInput"
-              @keyup.enter.native="handleInputConfirm"
-              @blur="handleInputConfirm"
-            >
-            </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput"><i class="fa fa-plus"></i></el-button>
+            <el-select v-model="inputTag" clearable multiple collapse-tags>
+              <el-option v-for="item in tags" :label="item.name" :value="item.id" :key="item.id"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">保存</el-button>
+            <el-checkbox v-model="editForm.commentsStatus" :true-label="1" :false-label="2">允许评论</el-checkbox>
           </el-form-item>
+          <el-form-item>
+            <el-checkbox v-model="editForm.topStatus" :true-label="1" :false-label="2">置顶</el-checkbox>
+          </el-form-item>
+          <el-button class="pull-right" type="primary">发布</el-button>
+          <el-button class="pull-right">保存草稿</el-button>
         </el-form>
       </el-col>
     </el-row>
@@ -55,35 +44,25 @@
           id: '',
           title: '',
           content: '',
-          tag: [],
-          cate: ''
+          html: '',
+          commentsStatus: 1,
+          topStatus: 2,
+          status: 1
         },
-        inputVisible: false,
-        inputValue: ''
+        inputCate: [],
+        inputTag: [],
+        categories: [],
+        tags: []
       }
     },
-    methods: {
-      handleClose (tag) {
-        this.editForm.tag.splice(this.editForm.tag.indexOf(tag), 1)
-      },
-
-      showInput () {
-        this.inputVisible = true
-        this.$nextTick(() => {
-          this.$refs.saveTagInput.$refs.input.focus()
-        })
-      },
-
-      handleInputConfirm () {
-        let inputValue = this.inputValue
-        if (inputValue) {
-          this.editForm.tag.push(inputValue)
-        }
-        this.inputVisible = false
-        this.inputValue = ''
-      }
-    },
+    methods: {},
     created: function () {
+      this.$api.cate.getList().then(result => {
+        this.categories = result
+      })
+      this.$api.tags.getList().then(result => {
+        this.tags = result
+      })
     }
   }
 </script>
@@ -91,6 +70,7 @@
 <style>
   .post-edit {
     padding: 20px;
+    min-height: 500px;
   }
 
   .el-tag + .el-tag {
@@ -109,5 +89,9 @@
     width: 70px;
     margin-left: 10px;
     vertical-align: bottom;
+  }
+
+  .v-note-wrapper {
+    min-height: 500px !important;
   }
 </style>

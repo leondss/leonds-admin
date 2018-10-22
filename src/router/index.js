@@ -8,6 +8,8 @@ import Resource from '../views/sys/Resource.vue'
 import ModifyPassword from '../views/sys/ModifyPassword'
 import Category from '../views/cms/Category'
 import PostsEdit from '../views/cms/PostsEdit'
+import Posts from '../views/cms/Posts'
+import Tag from '../views/cms/Tag'
 
 Vue.use(Router)
 
@@ -19,7 +21,7 @@ export default new Router({
       component: Login
     },
     {
-      path: '/posts/edit',
+      path: '/cms/posts/edit',
       name: 'PostsEdit',
       component: PostsEdit
     },
@@ -53,6 +55,16 @@ export default new Router({
           path: '/cms/category',
           name: 'Category',
           component: Category
+        },
+        {
+          path: '/cms/tag',
+          name: 'Tag',
+          component: Tag
+        },
+        {
+          path: '/cms/posts',
+          name: 'Posts',
+          component: Posts
         }
       ]
     }

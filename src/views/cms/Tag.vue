@@ -17,9 +17,7 @@
           v-loading="loading"
           style="width: 100%">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="sn" label="编号"></el-table-column>
           <el-table-column prop="name" label="名称"></el-table-column>
-          <el-table-column prop="position" label="顺序"></el-table-column>
           <el-table-column
             label="操作"
             width="200">
@@ -30,15 +28,12 @@
           </el-table-column>
         </el-table>
         <el-dialog
-          title="分类编辑"
+          title="标签编辑"
           :visible.sync="dialogVisible"
           width="40%">
           <el-form :model="editForm" :rules="rules" ref="editForm" label-width="80px">
             <el-form-item label="名称" prop="name">
               <el-input v-model="editForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="序号">
-              <el-input v-model="editForm.position"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="dialogVisible = false">取消</el-button>
@@ -53,7 +48,7 @@
 
 <script>
   export default {
-    name: 'Category',
+    name: 'Tag',
     data () {
       return {
         searchForm: {
@@ -61,13 +56,11 @@
         },
         editForm: {
           id: '',
-          name: '',
-          sn: '',
-          position: ''
+          name: ''
         },
         rules: {
           name: [
-            { required: true, message: '请输入分类名称', trigger: 'blur' }
+            { required: true, message: '请输入名称', trigger: 'blur' }
           ]
         },
         dialogVisible: false,
@@ -79,7 +72,7 @@
     methods: {
       search () {
         this.loading = true
-        this.$api.cate.getList().then(result => {
+        this.$api.tags.getList().then(result => {
           this.rows = result
           this.loading = false
         })
@@ -89,7 +82,7 @@
         this.$nextTick(() => {
           this.$refs.editForm.resetFields()
           if (id) {
-            this.$api.cate.get(id).then(data => {
+            this.$api.tags.get(id).then(data => {
               Object.assign(this.editForm, data)
             })
           } else {
@@ -101,7 +94,7 @@
         this.$refs['editForm'].validate((valid) => {
           if (valid) {
             this.editLoading = true
-            this.$api.cate.save(this.editForm).then(() => {
+            this.$api.tags.save(this.editForm).then(() => {
               this.editLoading = false
               this.dialogVisible = false
               this.$message.success('保存成功')
@@ -119,7 +112,7 @@
         this.$confirm('确定要删除吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          this.$api.cate.remove([id]).then(() => {
+          this.$api.tags.remove([id]).then(() => {
             this.$message.success('删除成功')
             this.search()
           }).catch(e => {

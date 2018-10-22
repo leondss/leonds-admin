@@ -22,6 +22,14 @@ const tabs = [
   {
     title: '分类管理',
     name: '/cms/category'
+  },
+  {
+    title: '标签管理',
+    name: '/cms/tag'
+  },
+  {
+    title: '文章管理',
+    name: '/cms/posts'
   }
 ]
 

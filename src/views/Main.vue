@@ -12,7 +12,7 @@
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
           <span class="sr-only">Toggle navigation</span>
         </a>
-        <router-link to="/posts/edit" class="link-title" target="_blank">
+        <router-link to="/cms/posts/edit" class="link-title" target="_blank">
           写文章
         </router-link>
         <div class="navbar-custom-menu">
