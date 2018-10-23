@@ -30,6 +30,10 @@ const tabs = [
   {
     title: '文章管理',
     name: '/cms/posts'
+  },
+  {
+    title: '系统设置',
+    name: '/sys/settings'
   }
 ]
 

@@ -10,6 +10,7 @@ import Category from '../views/cms/Category'
 import PostsEdit from '../views/cms/PostsEdit'
 import Posts from '../views/cms/Posts'
 import Tag from '../views/cms/Tag'
+import Settings from '../views/sys/Settings'
 
 Vue.use(Router)
 
@@ -45,6 +46,11 @@ export default new Router({
           path: '/sys/resource',
           name: 'Resource',
           component: Resource
+        },
+        {
+          path: '/sys/settings',
+          name: 'Settings',
+          component: Settings
         },
         {
           path: '/sys/modify/password',

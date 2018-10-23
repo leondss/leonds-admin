@@ -5,9 +5,10 @@ import uploads from './uploads'
 import cate from './categories'
 import posts from './posts'
 import tags from './tags'
+import settings from './settings'
 
 const apis = {
-  users, roles, resources, uploads, cate, posts, tags
+  users, roles, resources, uploads, cate, posts, tags, settings
 }
 
 const install = function (Vue) {
