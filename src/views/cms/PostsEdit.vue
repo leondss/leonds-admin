@@ -29,13 +29,15 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <mavon-editor v-model="editForm.content"/>
+        <mavon-editor v-model="editForm.content" ref="md" @imgAdd="handleImageAdd"/>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+  import * as qiniu from 'qiniu-js'
+
   export default {
     name: 'PostsEdit',
     data () {
@@ -58,6 +60,29 @@
     methods: {
       doSave () {
 
+      },
+      handleImageAdd (pos, file) {
+        this.$api.qiniu.getToken().then((token) => {
+          const observable = qiniu.upload(file, null, token)
+          observable.subscribe({
+            complete: (res) => {
+              console.log(res)
+              const imgLink = qiniu.watermark({
+                mode: 2,  // 文字水印
+                text: 'www.leonds.com', // 水印文字，mode = 2 时 **必需**
+                dissolve: 30,          // 透明度，取值范围1-100，非必需，下同
+                gravity: 'SouthEast',  // 水印位置，同上
+                fontsize: 500,         // 字体大小，单位: 缇
+                font: '黑体',           // 水印文字字体
+                dx: 10,               // 横轴边距，单位:像素(px)
+                dy: 10,               // 纵轴边距，单位:像素(px)
+                fill: '#FFF000'        // 水印文字颜色，RGB格式，可以是颜色名称
+              }, res.key, 'http://img.leonds.com')
+              console.log(imgLink)
+              this.$refs.md.$img2Url(pos, imgLink)
+            }
+          })
+        })
       }
     },
     created: function () {

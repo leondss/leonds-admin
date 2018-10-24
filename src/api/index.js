@@ -6,9 +6,10 @@ import cate from './categories'
 import posts from './posts'
 import tags from './tags'
 import settings from './settings'
+import qiniu from './qiniu'
 
 const apis = {
-  users, roles, resources, uploads, cate, posts, tags, settings
+  users, roles, resources, uploads, cate, posts, tags, settings, qiniu
 }
 
 const install = function (Vue) {
