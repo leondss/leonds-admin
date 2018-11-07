@@ -22,21 +22,35 @@
           v-loading="loading"
           style="width: 100%">
           <el-table-column prop="sn" label="编号" width="50"></el-table-column>
-          <el-table-column prop="name" label="标题" width="200"></el-table-column>
+          <el-table-column prop="title" label="标题" width="200"></el-table-column>
           <el-table-column prop="goodCount" label="好评"></el-table-column>
           <el-table-column prop="badCount" label="差评"></el-table-column>
           <el-table-column prop="commentsCount" label="评论"></el-table-column>
           <el-table-column prop="viewCount" label="浏览"></el-table-column>
-          <el-table-column prop="topStatus" label="置顶"></el-table-column>
-          <el-table-column prop="commentsStatus" label="评论状态"></el-table-column>
-          <el-table-column prop="status" label="状态"></el-table-column>
+          <el-table-column prop="topStatus" label="置顶">
+            <template slot-scope="scope">
+              {{scope.row.topStatus === 1 ? '是' : '否'}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="commentsStatus" label="评论状态">
+            <template slot-scope="scope">
+              {{scope.row.commentsStatus === 1 ? '开启' : '关闭'}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态">
+            <template slot-scope="scope">
+              {{scope.row.status === 1 ? '草稿' : '已发布'}}
+            </template>
+          </el-table-column>
           <el-table-column prop="publishTime" label="发布时间"></el-table-column>
           <el-table-column
             label="操作"
             width="100">
             <template slot-scope="scope">
               <el-button @click="remove(scope.row.id)" type="text">删除</el-button>
-              <el-button @click="edit(scope.row.id)" type="text">编辑</el-button>
+              <router-link target="_blank" :to="{ name: 'PostsEdit', params: { id: scope.row.id }}">
+                <el-button type="text">编辑</el-button>
+              </router-link>
             </template>
           </el-table-column>
         </el-table>

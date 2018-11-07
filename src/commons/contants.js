@@ -3,12 +3,30 @@ export const FILE_TYPE = {
   FILE: 'FILE'
 }
 
-export const DICT_TYPE = {
-  GOODS_CATEGORY: 'GOODS_CATEGORY',
-  QTY_UNIT: 'QTY_UNIT',
-  WEIGHT_UNIT: 'WEIGHT_UNIT',
-  PERM_ROW: 'PERM_ROW',
-  PERM_CELL: 'PERM_CELL'
+/**
+ * 评论状态: OPEN-开启；CLOSE-关闭
+ * @type {{OPEN: number, CLOSE: number}}
+ */
+export const COMMENTS_STATUS = {
+  OPEN: 1,
+  CLOSE: 2
+}
+/**
+ * 是否置顶
+ * @type {{Y: number, N: number}}
+ */
+export const TOP_STATUS = {
+  Y: 1,
+  N: 2
+}
+
+/**
+ * 文章状态
+ * @type {{DRAFT: number, PUBLISH: number}}
+ */
+export const POSTS_STATUS = {
+  DRAFT: 1,
+  PUBLISH: 2
 }
 
 export const SHORTCUTS = [{

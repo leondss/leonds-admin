@@ -1,35 +1,35 @@
 <template>
-  <div class="post-edit">
+  <div class="post-edit" v-loading="loading">
     <el-row>
       <el-col :span="24">
-        <el-form :inline="true" :model="editForm">
-          <el-form-item label="标题">
-            <el-input v-model="editForm.title" placeholder="请输入文章标题" clearable style="width: 300px"></el-input>
+        <el-form :inline="true" :model="editForm" :rules="rules" ref="editForm">
+          <el-form-item label="标题" prop="posts.title">
+            <el-input v-model="editForm.posts.title" placeholder="请输入文章标题" clearable style="width: 300px"></el-input>
           </el-form-item>
-          <el-form-item label="分类">
-            <el-select v-model="inputCate" clearable>
+          <el-form-item label="分类" prop="category">
+            <el-select v-model="editForm.category" clearable multiple style="width: 100px;">
               <el-option v-for="item in categories" :label="item.name" :value="item.id" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="标签">
-            <el-select v-model="inputTag" clearable multiple collapse-tags>
+            <el-select v-model="editForm.tag" clearable multiple collapse-tags>
               <el-option v-for="item in tags" :label="item.name" :value="item.id" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-checkbox v-model="editForm.commentsStatus" :true-label="1" :false-label="2">允许评论</el-checkbox>
+            <el-checkbox v-model="editForm.posts.commentsStatus" :true-label="1" :false-label="2">允许评论</el-checkbox>
           </el-form-item>
           <el-form-item>
-            <el-checkbox v-model="editForm.topStatus" :true-label="1" :false-label="2">置顶</el-checkbox>
+            <el-checkbox v-model="editForm.posts.topStatus" :true-label="1" :false-label="2">置顶</el-checkbox>
           </el-form-item>
-          <el-button class="pull-right" type="primary">发布</el-button>
-          <el-button class="pull-right">保存草稿</el-button>
+          <el-button class="pull-right" type="primary" style="margin-left: 10px" @click="publish">发布</el-button>
+          <el-button class="pull-right" @click="save">保存草稿</el-button>
         </el-form>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
-        <mavon-editor v-model="editForm.content" ref="md" @imgAdd="handleImageAdd"/>
+        <mavon-editor v-model="editForm.posts.contentMd" ref="md" @imgAdd="handleImageAdd" @change="handleMdChange"/>
       </el-col>
     </el-row>
   </div>
@@ -38,35 +38,73 @@
 <script>
   import * as qiniu from 'qiniu-js'
 
+  import { COMMENTS_STATUS, POSTS_STATUS, TOP_STATUS } from '../../commons/contants'
+
   export default {
     name: 'PostsEdit',
     data () {
       return {
         editForm: {
-          id: '',
-          title: '',
-          content: '',
-          html: '',
-          commentsStatus: 1,
-          topStatus: 2,
-          status: 1
+          posts: {
+            id: '',
+            title: '',
+            contentMd: '',
+            contentHtml: '',
+            commentsStatus: COMMENTS_STATUS.OPEN,
+            topStatus: TOP_STATUS.N,
+            status: POSTS_STATUS.DRAFT
+          },
+          category: [],
+          tag: []
         },
-        inputCate: [],
-        inputTag: [],
+        rules: {
+          'posts.title': [
+            { required: true, message: '请输入文章标题', trigger: 'blur' }
+          ],
+          category: [
+            { type: 'array', required: true, message: '请选择分类', trigger: 'change' }
+          ]
+        },
         categories: [],
-        tags: []
+        tags: [],
+        loading: false
       }
     },
     methods: {
+      publish () {
+        this.editForm.posts.status = POSTS_STATUS.PUBLISH
+        this.doSave()
+      },
+      save () {
+        console.log(this.editForm)
+        this.editForm.posts.status = POSTS_STATUS.DRAFT
+        this.doSave()
+      },
       doSave () {
-
+        this.$refs['editForm'].validate((valid) => {
+          if (valid) {
+            this.loading = true
+            this.$api.posts.save(this.editForm).then((result) => {
+              this.loading = false
+              this.$message.success('保存成功')
+              this.$router.push({ name: 'PostsEdit', params: { id: result.posts.id } })
+            }).catch(e => {
+              this.loading = false
+              this.$alert(e.message)
+            })
+          } else {
+            return false
+          }
+        })
+      },
+      handleMdChange (value, render) {
+        this.editForm.posts.contentHtml = render
       },
       handleImageAdd (pos, file) {
         this.$api.qiniu.getToken().then((token) => {
           const observable = qiniu.upload(file, null, token)
           observable.subscribe({
             complete: (res) => {
-              console.log(res)
               const imgLink = qiniu.watermark({
                 mode: 2,  // 文字水印
                 text: 'www.leonds.com', // 水印文字，mode = 2 时 **必需**
@@ -78,7 +116,6 @@
                 dy: 10,               // 纵轴边距，单位:像素(px)
                 fill: '#FFF000'        // 水印文字颜色，RGB格式，可以是颜色名称
               }, res.key, 'http://img.leonds.com')
-              console.log(imgLink)
               this.$refs.md.$img2Url(pos, imgLink)
             }
           })
