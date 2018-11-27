@@ -22,35 +22,48 @@
           v-loading="loading"
           style="width: 100%">
           <el-table-column prop="sn" label="编号" width="50"></el-table-column>
-          <el-table-column prop="title" label="标题" width="200"></el-table-column>
-          <el-table-column prop="goodCount" label="好评"></el-table-column>
-          <el-table-column prop="badCount" label="差评"></el-table-column>
-          <el-table-column prop="commentsCount" label="评论"></el-table-column>
-          <el-table-column prop="viewCount" label="浏览"></el-table-column>
-          <el-table-column prop="topStatus" label="置顶">
+          <el-table-column prop="title" label="标题" width="300"></el-table-column>
+          <el-table-column prop="goodCount" label="好评" width="50"></el-table-column>
+          <el-table-column prop="badCount" label="差评" width="50"></el-table-column>
+          <el-table-column prop="commentsCount" label="评论" width="50"></el-table-column>
+          <el-table-column prop="viewCount" label="浏览" width="50"></el-table-column>
+          <el-table-column prop="topStatus" label="置顶" width="50">
             <template slot-scope="scope">
               {{scope.row.topStatus === 1 ? '是' : '否'}}
             </template>
           </el-table-column>
-          <el-table-column prop="commentsStatus" label="评论状态">
+          <el-table-column prop="commentsStatus" label="评论状态" width="80">
             <template slot-scope="scope">
               {{scope.row.commentsStatus === 1 ? '开启' : '关闭'}}
             </template>
           </el-table-column>
+          <el-table-column prop="channel" label="渠道" width="50"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
               {{scope.row.status === 1 ? '草稿' : '已发布'}}
             </template>
           </el-table-column>
-          <el-table-column prop="publishTime" label="发布时间"></el-table-column>
+          <el-table-column prop="publishTime" label="发布时间" width="140"></el-table-column>
           <el-table-column
             label="操作"
             width="100">
             <template slot-scope="scope">
-              <el-button @click="remove(scope.row.id)" type="text">删除</el-button>
-              <router-link target="_blank" :to="{ name: 'PostsEdit', params: { id: scope.row.id }}">
-                <el-button type="text">编辑</el-button>
-              </router-link>
+              <el-dropdown>
+                <span class="el-dropdown-link">
+                  操作<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="remove(scope.row.id)" v-if="scope.row.status === 1">删除
+                  </el-dropdown-item>
+                  <router-link target="_blank" :to="{ name: 'PostsEdit', query: { id: scope.row.id }}">
+                    <el-dropdown-item>编辑</el-dropdown-item>
+                  </router-link>
+                  <el-dropdown-item @click.native="publish(scope.row.id)" v-if="scope.row.status === 1">发布
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="out(scope.row.id)" v-if="scope.row.status === 2">下架
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -109,15 +122,36 @@
         this.page = page
         this.search()
       },
-      edit (id) {
-        console.log(id)
-      },
       remove (id) {
         this.$confirm('确定要删除吗？', '提示', {
           type: 'warning'
         }).then(() => {
           this.$api.posts.remove([id]).then(() => {
             this.$message.success('删除成功')
+            this.handleCurrentChange(1)
+          }).catch(e => {
+            this.$alert(e.message)
+          })
+        }).catch(() => {})
+      },
+      publish (id) {
+        this.$confirm('确定要发布吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$api.posts.publish([id]).then(() => {
+            this.$message.success('发布成功成功')
+            this.handleCurrentChange(1)
+          }).catch(e => {
+            this.$alert(e.message)
+          })
+        }).catch(() => {})
+      },
+      out (id) {
+        this.$confirm('确定要下架吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.$api.posts.out([id]).then(() => {
+            this.$message.success('下架成功')
             this.handleCurrentChange(1)
           }).catch(e => {
             this.$alert(e.message)

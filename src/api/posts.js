@@ -16,6 +16,14 @@ function remove (params) {
   return http.post('/api/posts/remove', params)
 }
 
+function publish (params) {
+  return http.post('/api/posts/publish', params)
+}
+
+function out (params) {
+  return http.post('/api/posts/out', params)
+}
+
 export default {
-  getList, get, save, remove
+  getList, get, save, remove, publish, out
 }

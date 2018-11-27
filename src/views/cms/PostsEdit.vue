@@ -7,12 +7,12 @@
             <el-input v-model="editForm.posts.title" placeholder="请输入文章标题" clearable style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="分类" prop="category">
-            <el-select v-model="editForm.category" clearable multiple style="width: 100px;">
+            <el-select v-model="editForm.category" clearable multiple collapse-tags style="width: 130px;">
               <el-option v-for="item in categories" :label="item.name" :value="item.id" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="标签">
-            <el-select v-model="editForm.tag" clearable multiple collapse-tags>
+            <el-select v-model="editForm.tag" clearable multiple collapse-tags style="width: 130px;">
               <el-option v-for="item in tags" :label="item.name" :value="item.id" :key="item.id"></el-option>
             </el-select>
           </el-form-item>
@@ -21,6 +21,13 @@
           </el-form-item>
           <el-form-item>
             <el-checkbox v-model="editForm.posts.topStatus" :true-label="1" :false-label="2">置顶</el-checkbox>
+          </el-form-item>
+          <el-form-item label="渠道">
+            <el-select v-model="channel" clearable multiple
+                       style="width: 150px;">
+              <el-option label="PC" value="PC" key="PC"></el-option>
+              <el-option label="小程序" value="XCX" key="XCX"></el-option>
+            </el-select>
           </el-form-item>
           <el-button class="pull-right" type="primary" style="margin-left: 10px" @click="publish">发布</el-button>
           <el-button class="pull-right" @click="save">保存草稿</el-button>
@@ -52,7 +59,8 @@
             contentHtml: '',
             commentsStatus: COMMENTS_STATUS.OPEN,
             topStatus: TOP_STATUS.N,
-            status: POSTS_STATUS.DRAFT
+            status: POSTS_STATUS.DRAFT,
+            channel: ''
           },
           category: [],
           tag: []
@@ -67,7 +75,8 @@
         },
         categories: [],
         tags: [],
-        loading: false
+        loading: false,
+        channel: ['PC']
       }
     },
     methods: {
@@ -76,7 +85,6 @@
         this.doSave()
       },
       save () {
-        console.log(this.editForm)
         this.editForm.posts.status = POSTS_STATUS.DRAFT
         this.doSave()
       },
@@ -84,10 +92,12 @@
         this.$refs['editForm'].validate((valid) => {
           if (valid) {
             this.loading = true
+            this.editForm.posts.channel = this.channel.join(',')
+            console.log(this.editForm)
             this.$api.posts.save(this.editForm).then((result) => {
               this.loading = false
               this.$message.success('保存成功')
-              this.$router.push({ name: 'PostsEdit', params: { id: result.posts.id } })
+              this.$router.push({ name: 'PostsEdit', query: { id: result.posts.id } })
             }).catch(e => {
               this.loading = false
               this.$alert(e.message)
@@ -120,6 +130,21 @@
             }
           })
         })
+      },
+      init () {
+        const postsId = this.$route.query.id
+        if (postsId) {
+          this.loading = true
+          this.$api.posts.get(postsId).then((result) => {
+            this.loading = false
+            Object.assign(this.editForm, result)
+            this.channel = this.editForm.posts.channel ? this.editForm.posts.channel.split(',') : ['PC']
+            console.log(this.editForm)
+          }).catch(e => {
+            this.loading = false
+            this.$alert(e.message)
+          })
+        }
       }
     },
     created: function () {
@@ -129,6 +154,7 @@
       this.$api.tags.getList().then(result => {
         this.tags = result
       })
+      this.init()
     }
   }
 </script>
