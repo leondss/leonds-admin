@@ -1,16 +1,10 @@
-import users from './users'
-import roles from './roles'
-import resources from './resources'
-import uploads from './uploads'
-import cate from './categories'
-import posts from './posts'
-import tags from './tags'
-import settings from './settings'
-import qiniu from './qiniu'
+const files = require.context('.', false, /\.js$/)
+const apis = {}
 
-const apis = {
-  users, roles, resources, uploads, cate, posts, tags, settings, qiniu
-}
+files.keys().forEach(key => {
+  if (key === './index.js' || key === './http.js') return
+  apis[key.replace(/(\.\/|\.js)/g, '')] = files(key).default
+})
 
 const install = function (Vue) {
   if (install.installed) return

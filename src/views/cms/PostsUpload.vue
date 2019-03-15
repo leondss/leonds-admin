@@ -3,9 +3,6 @@
     <el-row>
       <el-col :span="24">
         <el-form :inline="true" :model="editForm" :rules="rules" ref="editForm">
-          <el-form-item label="标题" prop="posts.title">
-            <el-input v-model="editForm.posts.title" placeholder="请输入文章标题" clearable style="width: 300px"></el-input>
-          </el-form-item>
           <el-form-item label="分类" prop="category">
             <el-select v-model="editForm.category" clearable multiple collapse-tags style="width: 130px;">
               <el-option v-for="item in categories" :label="item.name" :value="item.id" :key="item.id"></el-option>
@@ -36,48 +33,33 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <el-tabs value="import">
-          <el-tab-pane label="在线编辑" name="online">
-            <mavon-editor v-model="editForm.posts.contentMd" ref="md" @imgAdd="handleImageAdd"
-                          @change="handleMdChange"/>
-          </el-tab-pane>
-          <el-tab-pane label="文件导入" name="import">
-            <div style="width: 700px;line-height: 40px">
-              <el-button class="pull-right" type="success" @click="clonePosts">CLONE</el-button>
-              <span>当前选中文件：{{ editForm.posts.file }}</span>
-            </div>
-            <el-card shadow="never" style="width: 700px;">
-              <el-tree
-                :props="columns"
-                node-key="id"
-                ref="tree"
-                @node-click="onNodeClick"
-                :load="loadPosts"
-                lazy
-                v-if="show"
-                :expand-on-click-node="false"
-                highlight-current>
-              <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span>{{ node.label }}</span>
-                <span class="custom-tree-node-time">{{ getFileDate(data) }}</span>
-              </span>
-              </el-tree>
-            </el-card>
-          </el-tab-pane>
-        </el-tabs>
+        <h4>文件列表</h4>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <el-button type="success" @click="save">CLONE</el-button>
+        <el-tree
+          :props="columns"
+          node-key="id"
+          ref="tree"
+          @node-click="onNodeClick"
+          :load="loadPosts"
+          lazy
+          :default-expand-all="true"
+          :expand-on-click-node="false"
+          highlight-current>
+        </el-tree>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-  import * as qiniu from 'qiniu-js'
-  import moment from 'moment'
-
   import { COMMENTS_STATUS, POSTS_STATUS, TOP_STATUS } from '../../commons/contants'
 
   export default {
-    name: 'PostsEdit',
+    name: 'PostsUpload',
     data () {
       return {
         editForm: {
@@ -89,8 +71,7 @@
             commentsStatus: COMMENTS_STATUS.OPEN,
             topStatus: TOP_STATUS.N,
             status: POSTS_STATUS.DRAFT,
-            channel: '',
-            file: ''
+            channel: ''
           },
           category: [],
           tag: []
@@ -110,8 +91,7 @@
         columns: {
           label: 'name',
           id: 'path'
-        },
-        show: true
+        }
       }
     },
     methods: {
@@ -142,30 +122,6 @@
           }
         })
       },
-      handleMdChange (value, render) {
-        this.editForm.posts.contentHtml = render
-      },
-      handleImageAdd (pos, file) {
-        this.$api.qiniu.getToken().then((token) => {
-          const observable = qiniu.upload(file, null, token)
-          observable.subscribe({
-            complete: (res) => {
-              const imgLink = qiniu.watermark({
-                mode: 2,  // 文字水印
-                text: 'www.leonds.com', // 水印文字，mode = 2 时 **必需**
-                dissolve: 30,          // 透明度，取值范围1-100，非必需，下同
-                gravity: 'SouthEast',  // 水印位置，同上
-                fontsize: 500,         // 字体大小，单位: 缇
-                font: '黑体',           // 水印文字字体
-                dx: 10,               // 横轴边距，单位:像素(px)
-                dy: 10,               // 纵轴边距，单位:像素(px)
-                fill: '#FFF000'        // 水印文字颜色，RGB格式，可以是颜色名称
-              }, res.key, 'http://img.leonds.com')
-              this.$refs.md.$img2Url(pos, imgLink)
-            }
-          })
-        })
-      },
       init () {
         const postsId = this.$route.query.id
         if (postsId) {
@@ -182,13 +138,8 @@
         }
       },
       onNodeClick (data, node) {
-        if (!data.dir) {
-          this.editForm.posts.file = data.path
-          this.editForm.posts.title = data.name.substring(0, data.name.lastIndexOf('.'))
-        } else {
-          this.editForm.posts.file = ''
-          this.editForm.posts.title = ''
-        }
+        const parentName = node.parent.data && node.parent.data.name
+        Object.assign(this.editForm, data, { parentName: parentName })
       },
       loadPosts (node, resolve) {
         let dir = ''
@@ -197,20 +148,6 @@
         }
         this.$api.posts.getPostsFiles({ dir: dir }).then(data => {
           resolve(data)
-        })
-      },
-      getFileDate (data) {
-        if (!data.dir) {
-          return moment(data.time).format('YYYY-MM-DD HH:mm:ss')
-        }
-      },
-      clonePosts () {
-        this.$api.posts.clonePosts().then(() => {
-          this.$message.success('刷新成功')
-          this.show = false
-          this.$nextTick(() => {
-            this.show = true
-          })
         })
       }
     },
@@ -252,18 +189,5 @@
 
   .v-note-wrapper {
     min-height: 500px !important;
-  }
-
-  .custom-tree-node {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    padding-right: 8px;
-  }
-
-  .custom-tree-node-time {
-    color: #cccccc;
   }
 </style>

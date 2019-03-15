@@ -24,6 +24,14 @@ function out (params) {
   return http.post('/api/posts/out', params)
 }
 
+function clonePosts () {
+  return http.get('/api/posts/clone')
+}
+
+function getPostsFiles (params) {
+  return http.get('/api/posts/files', { params: params })
+}
+
 export default {
-  getList, get, save, remove, publish, out
+  getList, get, save, remove, publish, out, clonePosts, getPostsFiles
 }
