@@ -22,11 +22,6 @@ export default new Router({
       component: Login
     },
     {
-      path: '/cms/posts/edit',
-      name: 'PostsEdit',
-      component: PostsEdit
-    },
-    {
       path: '/',
       name: 'Main',
       component: Main,
@@ -71,6 +66,11 @@ export default new Router({
           path: '/cms/posts',
           name: 'Posts',
           component: Posts
+        },
+        {
+          path: '/cms/posts/edit',
+          name: 'PostsEdit',
+          component: PostsEdit
         }
       ]
     }

@@ -55,7 +55,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="remove(scope.row.id)" v-if="scope.row.status === 1">删除
                   </el-dropdown-item>
-                  <router-link target="_blank" :to="{ name: 'PostsEdit', query: { id: scope.row.id }}">
+                  <router-link :to="{ name: 'PostsEdit', query: { id: scope.row.id }}">
                     <el-dropdown-item>编辑</el-dropdown-item>
                   </router-link>
                   <el-dropdown-item @click.native="publish(scope.row.id)" v-if="scope.row.status === 1">发布

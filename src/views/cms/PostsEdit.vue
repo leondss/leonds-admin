@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-form :inline="true" :model="editForm" :rules="rules" ref="editForm">
           <el-form-item label="标题" prop="posts.title">
-            <el-input v-model="editForm.posts.title" placeholder="请输入文章标题" clearable style="width: 300px"></el-input>
+            <el-input v-model="editForm.posts.title" placeholder="请输入文章标题" clearable style="width: 150px"></el-input>
           </el-form-item>
           <el-form-item label="分类" prop="category">
             <el-select v-model="editForm.category" clearable multiple collapse-tags style="width: 130px;">
@@ -24,7 +24,7 @@
           </el-form-item>
           <el-form-item label="渠道">
             <el-select v-model="channel" clearable multiple
-                       style="width: 150px;">
+                       style="width: 100px;">
               <el-option label="PC" value="PC" key="PC"></el-option>
               <el-option label="小程序" value="XCX" key="XCX"></el-option>
             </el-select>
@@ -44,7 +44,7 @@
           <el-tab-pane label="文件导入" name="import">
             <div style="width: 700px;line-height: 40px">
               <el-button class="pull-right" type="success" @click="clonePosts">CLONE</el-button>
-              <span>当前选中文件：{{ editForm.posts.file }}</span>
+              <span>当前选中文件：{{ editForm.posts.filePath }}</span>
             </div>
             <el-card shadow="never" style="width: 700px;">
               <el-tree
@@ -90,7 +90,7 @@
             topStatus: TOP_STATUS.N,
             status: POSTS_STATUS.DRAFT,
             channel: '',
-            file: ''
+            filePath: ''
           },
           category: [],
           tag: []
@@ -128,7 +128,6 @@
           if (valid) {
             this.loading = true
             this.editForm.posts.channel = this.channel.join(',')
-            console.log(this.editForm)
             this.$api.posts.save(this.editForm).then((result) => {
               this.loading = false
               this.$message.success('保存成功')
@@ -183,10 +182,10 @@
       },
       onNodeClick (data, node) {
         if (!data.dir) {
-          this.editForm.posts.file = data.path
+          this.editForm.posts.filePath = data.path
           this.editForm.posts.title = data.name.substring(0, data.name.lastIndexOf('.'))
         } else {
-          this.editForm.posts.file = ''
+          this.editForm.posts.filePath = ''
           this.editForm.posts.title = ''
         }
       },

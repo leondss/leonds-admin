@@ -34,6 +34,10 @@ const tabs = [
   {
     title: '系统设置',
     name: '/sys/settings'
+  },
+  {
+    title: '文章发布',
+    name: '/cms/posts/edit'
   }
 ]
 
